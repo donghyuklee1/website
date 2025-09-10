@@ -74,7 +74,17 @@
         blogSection.style.display = 'none';
 
         // Firebase Initialization and Auth
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        // Canvas 환경에서 자동으로 설정이 주입됩니다.
+        // 외부에서 배포할 경우, 아래 firebaseConfig 객체를 본인의 Firebase 프로젝트 설정으로 교체해주세요.
+        const firebaseConfig = {
+  apiKey: "AIzaSyDZ73acZGuPE-9uwUy_90d2c4zQEEKOMvc",
+  authDomain: "website-4b4f8.firebaseapp.com",
+  projectId: "website-4b4f8",
+  storageBucket: "website-4b4f8.firebasestorage.app",
+  messagingSenderId: "965602529024",
+  appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
+  measurementId: "G-DKL0JSXECD"
+};
         appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
