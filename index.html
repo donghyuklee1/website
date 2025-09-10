@@ -6,101 +6,54 @@
     <title>Donghyuk Lee</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.css" />
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .dark body {
-            background-color: #1a202c;
-            color: #e2e8f0;
-        }
-        .dark .card {
-            background-color: #2d3748;
-            border-color: #4a5568;
-        }
-        .dark .btn {
-            background-color: #4a5568;
-            color: #e2e8f0;
-        }
-        .dark input, .dark textarea {
-            background-color: #4a5568;
-            border-color: #4a5568;
-            color: #e2e8f0;
-        }
-        .dark .comment-box {
-            background-color: #4a5568;
-        }
-        .modal {
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        /* --- 이 코드를 새로 추가하세요 --- */
-.nav-btn {
-    /* 부드러운 전환 효과를 위해 transition 속성을 추가합니다. */
-    transition: all 0.3s ease-in-out;
-}
-
-/* hover: 마우스를 올렸을 때의 스타일 (활성 상태가 아닐 때) */
-.nav-btn:not(.active):hover {
-    background-color: #e5e7eb; /* 라이트 모드 배경 */
-    transform: translateY(-2px); /* 살짝 위로 이동 */
-}
-
-.dark .nav-btn:not(.active):hover {
-    background-color: #374151; /* 다크 모드 배경 */
-}
-
-/* active: 현재 활성화된 버튼의 스타일 */
-.nav-btn.active {
-    font-weight: 600;
-    background-color: #3b82f6; /* 파란색 배경 */
-    color: #ffffff; /* 흰색 글씨 */
-    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3); /* 은은한 그림자 효과 */
-    transform: translateY(-2px);
-}
-
-/* active 상태에서 hover 했을 때의 추가 효과 */
-.nav-btn.active:hover {
-    filter: brightness(1.1); /* 살짝 더 밝게 */
-}
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .dark body { background-color: #1a202c; color: #e2e8f0; }
+        .dark .card { background-color: #2d3748; border-color: #4a5568; }
+        .dark .btn { background-color: #4a5568; color: #e2e8f0; }
+        .dark input, .dark textarea { background-color: #4a5568; border-color: #4a5568; color: #e2e8f0; }
+        .dark .comment-box { background-color: #4a5568; }
+        .modal { transition: opacity 0.3s ease-in-out; }
         
-        .card, .btn {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s, color 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .dark .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn:hover {
-            transform: scale(1.05);
-        }
-
-        main section {
-            transition: opacity 0.3s ease-in-out;
-        }
+        .nav-btn { transition: all 0.3s ease-in-out; }
+        .nav-btn:not(.active):hover { background-color: #e5e7eb; transform: translateY(-2px); }
+        .dark .nav-btn:not(.active):hover { background-color: #374151; }
+        .nav-btn.active { font-weight: 600; background-color: #3b82f6; color: #ffffff; box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3); transform: translateY(-2px); }
+        .nav-btn.active:hover { filter: brightness(1.1); }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.js"></script>
+    
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Firebase v9 모듈러 API 대신 v8 호환성 API를 사용하도록 수정
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZ73acZGuPE-9uwUy_90d2c4zQEEKOMvc",
+            authDomain: "website-4b4f8.firebaseapp.com",
+            projectId: "website-4b4f8",
+            storageBucket: "website-4b4f8.appspot.com",
+            messagingSenderId: "965602529024",
+            appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
+        };
+
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const appId = firebaseConfig.projectId;
         
-        // Global Variables
-        let db;
-        let auth;
+        // --- 전역 변수 및 UI 요소 ---
         let userId;
-        let appId;
         let blogPostsRef;
         const blogPostsData = {};
 
-        // UI Elements
         const blogPostsContainer = document.getElementById('blog-posts-container');
         const newPostForm = document.getElementById('new-post-form');
         const loginStatus = document.getElementById('login-status');
@@ -109,318 +62,269 @@
         const modalTitle = document.getElementById('modal-title');
         const modalContent = document.getElementById('modal-content');
         const modalCloseBtn = document.getElementById('modal-close-btn');
+        const loginModal = document.getElementById('login-modal');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const newPostSection = document.getElementById('new-post-section');
+        const loginPrompt = document.getElementById('login-prompt');
 
-        // Firebase Initialization and Auth
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZ73acZGuPE-9uwUy_90d2c4zQEEKOMvc",
-            authDomain: "website-4b4f8.firebaseapp.com",
-            projectId: "website-4b4f8",
-            storageBucket: "website-4b4f8.appspot.com",
-            messagingSenderId: "965602529024",
-            appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
-            measurementId: "G-DKL0JSXECD"
+        // --- FirebaseUI 설정 ---
+        const ui = new firebaseui.auth.AuthUI(auth);
+        const uiConfig = {
+            callbacks: {
+                signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+                    hideLoginModal();
+                    return false; // 페이지 리디렉션을 막습니다.
+                },
+            },
+            signInFlow: 'popup',
+            signInOptions: [
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            ],
         };
-        appId = firebaseConfig.projectId;
 
-        if (Object.keys(firebaseConfig).length > 0) {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            signInAnonymously(auth).catch(error => {
-                console.error("Error signing in anonymously:", error);
-                showModal('익명 로그인 오류', '익명 로그인 중 오류가 발생했습니다.');
-            });
+        // --- 인증 상태 리스너 ---
+        auth.onAuthStateChanged(async (user) => {
+            if (user && !user.isAnonymous) {
+                // 실제 사용자로 로그인한 경우
+                userId = user.uid;
+                loginStatus.innerHTML = `${user.displayName || user.email.split('@')[0]}님 환영합니다!`;
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+                newPostSection.style.display = 'block';
+                loginPrompt.style.display = 'none';
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    loginStatus.textContent = `사용자 ID: ${userId.substring(0, 10)}...`;
-                    blogPostsRef = collection(db, `artifacts/${appId}/public/data/blog_posts`);
-                    
-                    const userSettingsRef = doc(db, `artifacts/${appId}/users/${userId}/settings/theme`);
-                    const userSettingsSnap = await getDoc(userSettingsRef);
-                    if (userSettingsSnap.exists() && userSettingsSnap.data().darkMode) {
-                        document.documentElement.classList.add('dark');
-                    }
-
-                    setupBlogListener();
-                } else {
-                    console.log("사용자가 로그아웃되었거나 익명 로그인에 실패했습니다.");
+                const userSettingsRef = db.doc(`artifacts/${appId}/users/${userId}/settings/theme`);
+                const userSettingsSnap = await userSettingsRef.get();
+                if (userSettingsSnap.exists && userSettingsSnap.data().darkMode) {
+                    document.documentElement.classList.add('dark');
                 }
-            });
-        } else {
-            console.error("Firebase config is missing.");
-            showModal('Firebase 설정 오류', 'Firebase 설정이 누락되었습니다. 앱을 초기화할 수 없습니다.');
-        }
-        
-        // --- Blog Logic ---
-        function setupBlogListener() {
-            if (!blogPostsRef) return;
-            onSnapshot(query(blogPostsRef, orderBy("timestamp", "desc")), (snapshot) => {
-                blogPostsContainer.innerHTML = '';
-                snapshot.forEach((doc) => {
-                    const post = doc.data();
-                    const postId = doc.id;
-                    blogPostsData[postId] = post;
-                    
-                    const postElement = document.createElement('div');
-                    postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
-                    postElement.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-2xl font-semibold mb-2">${post.content.split('\n')[0].substring(0, 50)}...</h3>
-                                <p class="text-sm text-gray-500">작성자: ${post.userId.substring(0,8)}...</p>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <span id="likes-count-${postId}" class="text-red-500">${post.likes ? post.likes.length : 0}</span>
-                                <button onclick="likePost('${postId}')" class="btn bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm hover:bg-red-500 hover:text-white transition-colors duration-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                ${post.userId === userId ? `
-                                    <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition-colors duration-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                        </svg>
-                                    </button>
-                                    <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm hover:bg-red-600 transition-colors duration-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                        <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
-                        
-                        <div class="comments-container border-t pt-4 mt-4">
-                            <h4 class="font-semibold mb-2">댓글</h4>
-                            <ul id="comments-list-${postId}" class="list-disc ml-5 space-y-2"></ul>
-                            <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();">
-                                <input type="text" name="commentContent" placeholder="댓글을 입력하세요..." class="w-full mt-4 p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-200">댓글 추가</button>
-                            </form>
-                        </div>
-                    `;
-                    blogPostsContainer.appendChild(postElement);
-                    
-                    const commentsList = document.getElementById(`comments-list-${postId}`);
-                    if (post.comments) {
-                        post.comments.forEach(comment => {
-                            const commentItem = document.createElement('li');
-                            commentItem.className = 'comment-box p-2 rounded-lg';
-                            commentItem.innerHTML = `<span class="font-medium">${comment.userId.substring(0, 8)}...:</span> ${comment.content}`;
-                            commentsList.appendChild(commentItem);
-                        });
-                    }
-                });
-            });
-        }
-        
-        window.likePost = async (postId) => {
-            const postRef = doc(db, `artifacts/${appId}/public/data/blog_posts/${postId}`);
-            const post = blogPostsData[postId];
-            
-            let newLikes = post.likes || [];
-            if (newLikes.includes(userId)) {
-                newLikes = newLikes.filter(id => id !== userId);
             } else {
-                newLikes.push(userId);
-            }
-            
-            await updateDoc(postRef, {
-                likes: newLikes
-            }).catch(error => {
-                console.error("Error updating likes:", error);
-                showModal('오류', '좋아요 업데이트에 실패했습니다.');
-            });
-        };
-        
-        window.addComment = async (postId, commentContent) => {
-            if (!commentContent.trim()) {
-                showModal('알림', '댓글 내용을 입력해주세요.');
-                return;
-            }
-            const postRef = doc(db, `artifacts/${appId}/public/data/blog_posts/${postId}`);
-            const post = blogPostsData[postId];
-            const newComments = post.comments || [];
-            newComments.push({ userId: userId, content: commentContent, timestamp: Date.now() });
-            
-            await updateDoc(postRef, {
-                comments: newComments
-            }).catch(error => {
-                console.error("Error adding comment:", error);
-                showModal('오류', '댓글 추가에 실패했습니다.');
-            });
-        };
-        
-        window.deletePost = async (postId) => {
-            const post = blogPostsData[postId];
-            if (post.userId !== userId) {
-                showModal('오류', '자신의 게시물만 삭제할 수 있습니다.');
-                return;
-            }
-            showModal('확인', '정말 이 게시물을 삭제하시겠습니까?', async () => {
-                await deleteDoc(doc(db, `artifacts/${appId}/public/data/blog_posts/${postId}`))
-                .then(() => showModal('알림', '게시물이 삭제되었습니다.'))
-                .catch(error => {
-                    console.error("Error deleting post:", error);
-                    showModal('오류', '게시물 삭제에 실패했습니다.');
-                });
-            });
-        };
-
-        window.editPost = (postId) => {
-            const post = blogPostsData[postId];
-            if (post.userId !== userId) {
-                showModal('오류', '자신의 게시물만 수정할 수 있습니다.');
-                return;
-            }
-            showModal('게시물 수정', `<textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">${post.content}</textarea>`, async () => {
-                const newContent = document.getElementById('edit-post-content').value;
-                if (newContent !== null) {
-                    updateDoc(doc(db, `artifacts/${appId}/public/data/blog_posts/${postId}`), {
-                        content: newContent
-                    }).then(() => showModal('알림', '게시물이 수정되었습니다.')) // <-- 오타 수정
-                    .catch(error => {
-                        console.error("Error updating post:", error);
-                        showModal('오류', '게시물 수정에 실패했습니다.');
-                    });
+                // 로그아웃 또는 익명 사용자인 경우
+                userId = user ? user.uid : null;
+                loginStatus.textContent = '로그인되지 않았습니다.';
+                loginBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+                newPostSection.style.display = 'none';
+                loginPrompt.style.display = 'block';
+                
+                // 익명 로그인을 시도합니다 (읽기 전용).
+                if (!user) {
+                   auth.signInAnonymously().catch(error => console.error("익명 로그인 실패:", error));
                 }
-            }, true);
-        };
+            }
+            // 블로그 리스너는 항상 설정하여 모든 사용자가 글을 볼 수 있도록 합니다.
+            setupBlogListener();
+        });
 
+        function setupBlogListener() {
+            if (blogPostsRef) blogPostsRef(); // 기존 리스너 해제
+            blogPostsRef = db.collection(`artifacts/${appId}/public/data/blog_posts`)
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    blogPostsContainer.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const post = doc.data();
+                        const postId = doc.id;
+                        blogPostsData[postId] = post;
+                        renderPost(postId, post);
+                    });
+                });
+        }
+        
+        function renderPost(postId, post) {
+             const postElement = document.createElement('div');
+             postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
+             postElement.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">${post.content.split('\n')[0].substring(0, 50)}...</h3>
+                        <p class="text-sm text-gray-500">작성자: ${post.authorName || '익명'}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-red-500">${post.likes ? post.likes.length : 0}</span>
+                        <button onclick="likePost('${postId}')" class="btn bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm hover:bg-red-500 hover:text-white">♡</button>
+                        ${post.userId === userId ? `
+                            <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm">수정</button>
+                            <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm">삭제</button>
+                        ` : ''}
+                    </div>
+                </div>
+                <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
+                <div class="comments-container border-t pt-4 mt-4">
+                    <h4 class="font-semibold mb-2">댓글</h4>
+                    <div id="comments-list-${postId}" class="space-y-2"></div>
+                    <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
+                        <input type="text" name="commentContent" placeholder="댓글을 입력하세요..." class="w-full p-2 rounded-lg border">
+                        <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">댓글 추가</button>
+                    </form>
+                </div>
+            `;
+            blogPostsContainer.appendChild(postElement);
+
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            if (post.comments) {
+                post.comments.forEach(comment => {
+                    const commentItem = document.createElement('div');
+                    commentItem.className = 'comment-box p-2 rounded-lg text-sm';
+                    commentItem.innerHTML = `<span class="font-semibold">${comment.authorName || '익명'}:</span> ${comment.content}`;
+                    commentsList.appendChild(commentItem);
+                });
+            }
+        }
+        
         newPostForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const postContent = document.getElementById('new-post-content').value;
-            if (postContent.trim() === '') {
-                showModal('알림', '게시물 내용을 입력해주세요.');
+            const user = auth.currentUser;
+            if (!user || user.isAnonymous) {
+                showModal('오류', '로그인이 필요합니다.');
                 return;
             }
-            
+            const postContent = document.getElementById('new-post-content').value;
+            if (postContent.trim() === '') return;
+
             const newPost = {
                 content: postContent,
-                userId: userId,
-                timestamp: Date.now(),
+                userId: user.uid,
+                authorName: user.displayName || user.email.split('@')[0],
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 likes: [],
                 comments: []
             };
 
-            await addDoc(blogPostsRef, newPost)
-                .then(() => {
-                    document.getElementById('new-post-content').value = '';
-                    showModal('알림', '새로운 게시물이 추가되었습니다.');
-                })
-                .catch(error => {
-                    console.error("Error adding new post:", error);
-                    showModal('오류', '게시물 추가에 실패했습니다.');
-                });
+            try {
+                await db.collection(`artifacts/${appId}/public/data/blog_posts`).add(newPost);
+                document.getElementById('new-post-content').value = '';
+                showModal('알림', '새로운 게시물이 추가되었습니다.');
+            } catch (error) {
+                console.error("게시물 추가 오류:", error);
+                showModal('오류', '게시물 추가에 실패했습니다. Firestore 규칙을 확인하세요.');
+            }
         });
+        
+        window.likePost = async (postId) => {
+            if (!auth.currentUser) { showModal('알림', '좋아요를 누르려면 로그인이 필요합니다.'); return; }
+            const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
+            const post = blogPostsData[postId];
+            let newLikes = post.likes || [];
+            if (newLikes.includes(auth.currentUser.uid)) {
+                newLikes = newLikes.filter(id => id !== auth.currentUser.uid);
+            } else {
+                newLikes.push(auth.currentUser.uid);
+            }
+            await postRef.update({ likes: newLikes });
+        };
+        
+        window.addComment = async (postId, commentContent) => {
+            if (!auth.currentUser) { showModal('알림', '댓글을 작성하려면 로그인이 필요합니다.'); return; }
+            if (!commentContent.trim()) return;
+            const user = auth.currentUser;
+            const newComment = {
+                userId: user.uid,
+                authorName: user.displayName || user.email.split('@')[0],
+                content: commentContent,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
+            await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
+        };
+        
+        window.deletePost = async (postId) => {
+             showModal('확인', '정말 이 게시물을 삭제하시겠습니까?', () => {
+                db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).delete()
+                  .catch(error => showModal('오류', '게시물 삭제에 실패했습니다.'));
+            }, true);
+        };
+        
+        window.editPost = (postId) => {
+             const post = blogPostsData[postId];
+             showModal('게시물 수정', `<textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border">${post.content}</textarea>`, () => {
+                const newContent = document.getElementById('edit-post-content').value;
+                if (newContent) {
+                    db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({ content: newContent })
+                      .catch(error => showModal('오류', '게시물 수정에 실패했습니다.'));
+                }
+            }, true);
+        };
 
-        // --- UI and Modal Logic ---
-        let currentSectionId = 'about'; // 현재 활성화된 섹션을 추적
-
-        // 페이지 로드 시 초기 상태 설정
+        // --- UI 및 모달 로직 ---
+        let currentSectionId = 'about';
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('main section').forEach(section => {
-                if (section.id !== currentSectionId) {
-                    section.style.display = 'none';
-                    section.style.opacity = '0';
-                } else {
-                    section.style.display = 'block';
-                    section.style.opacity = '1';
-                }
+                section.style.display = section.id === currentSectionId ? 'block' : 'none';
+                section.style.opacity = section.id === currentSectionId ? '1' : '0';
             });
             document.querySelector(`.nav-btn[data-section="${currentSectionId}"]`).classList.add('active');
         });
 
         window.showSection = (sectionId) => {
-            if (sectionId === currentSectionId) return; // 같은 버튼 클릭 시 아무것도 안 함
-
+            if (sectionId === currentSectionId) return;
             const currentSection = document.getElementById(currentSectionId);
             const nextSection = document.getElementById(sectionId);
-
-            // 네비게이션 버튼 활성 상태 업데이트
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
 
-            // 현재 섹션 페이드 아웃
-            if (currentSection) {
-                currentSection.style.opacity = '0';
-            }
-
-            // 0.3초 후 섹션 전환 및 새 섹션 페이드 인
+            if (currentSection) currentSection.style.opacity = '0';
             setTimeout(() => {
-                if (currentSection) {
-                    currentSection.style.display = 'none';
-                }
+                if (currentSection) currentSection.style.display = 'none';
                 if (nextSection) {
                     nextSection.style.display = 'block';
-                    setTimeout(() => {
-                        nextSection.style.opacity = '1';
-                    }, 20);
+                    setTimeout(() => { nextSection.style.opacity = '1'; }, 20);
                 }
                 currentSectionId = sectionId;
-            }, 300); // CSS transition 시간과 일치
+            }, 300);
         };
         
-        function showModal(title, content, onConfirm = null, isEdit = false) {
+        function showModal(title, content, onConfirm, showConfirmCancel) {
             modalTitle.textContent = title;
             modalContent.innerHTML = content;
-            if (isEdit) {
-                const confirmBtn = document.createElement('button');
-                confirmBtn.className = 'btn bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors duration-200 mr-2';
-                confirmBtn.textContent = '저장';
-                confirmBtn.onclick = () => {
-                    if (onConfirm) onConfirm();
-                    hideModal();
-                };
-                modalContent.appendChild(confirmBtn);
-            } else if (onConfirm) {
-                const confirmBtn = document.createElement('button');
-                confirmBtn.className = 'btn bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors duration-200 mr-2';
-                confirmBtn.textContent = '예';
-                confirmBtn.onclick = () => {
-                    if (onConfirm) onConfirm();
-                    hideModal();
-                };
-                modalContent.appendChild(confirmBtn);
-                const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'btn bg-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-400 transition-colors duration-200';
-                cancelBtn.textContent = '아니오';
-                cancelBtn.onclick = hideModal;
-                modalContent.appendChild(cancelBtn);
-            } else {
-                // '확인' 버튼을 모달 내용의 일부가 아닌 닫기 버튼과 별도로 관리
+            // 이전 버튼들 제거
+            const oldButtons = modal.querySelectorAll('.modal-action-btn');
+            oldButtons.forEach(btn => btn.remove());
+            
+            if (showConfirmCancel && onConfirm) {
+                 const confirmBtn = document.createElement('button');
+                 confirmBtn.className = 'modal-action-btn btn bg-red-500 text-white px-4 py-2 rounded-full mr-2';
+                 confirmBtn.textContent = '확인';
+                 confirmBtn.onclick = () => { onConfirm(); hideModal(); };
+                 modalCloseBtn.parentNode.insertBefore(confirmBtn, modalCloseBtn);
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100');
         }
-
-        function hideModal() {
-            modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
+        function hideModal() { modal.classList.add('opacity-0', 'pointer-events-none'); }
         modalCloseBtn.addEventListener('click', hideModal);
 
-        // Dark Mode Logic
+        function showLoginModal() { loginModal.classList.remove('opacity-0', 'pointer-events-none'); }
+        function hideLoginModal() { loginModal.classList.add('opacity-0', 'pointer-events-none'); }
+        
+        loginBtn.addEventListener('click', showLoginModal);
+        logoutBtn.addEventListener('click', () => auth.signOut());
+        document.getElementById('login-modal-close-btn').addEventListener('click', hideLoginModal);
+        
         darkModeToggle.addEventListener('click', async () => {
+            if(!auth.currentUser || auth.currentUser.isAnonymous) return;
             const isDarkMode = document.documentElement.classList.toggle('dark');
-            const userSettingsRef = doc(db, `artifacts/${appId}/users/${userId}/settings/theme`);
-            await setDoc(userSettingsRef, { darkMode: isDarkMode });
+            await db.doc(`artifacts/${appId}/users/${auth.currentUser.uid}/settings/theme`).set({ darkMode: isDarkMode });
         });
+        
+        // FirebaseUI 위젯 시작
+        ui.start('#firebaseui-auth-container', uiConfig);
     </script>
     
     <div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50">
         <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-md text-center">
             <h3 id="modal-title" class="text-xl font-semibold mb-4"></h3>
             <div id="modal-content" class="text-gray-600 dark:text-gray-300 mb-6 text-left"></div>
-            <button id="modal-close-btn" class="btn bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors duration-200">닫기</button>
+            <button id="modal-close-btn" class="btn bg-gray-300 px-4 py-2 rounded-full">닫기</button>
+        </div>
+    </div>
+
+    <div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50">
+        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-md">
+            <h3 class="text-2xl font-bold mb-6 text-center">로그인</h3>
+            <div id="firebaseui-auth-container"></div>
+            <button id="login-modal-close-btn" class="w-full mt-4 btn bg-gray-300 px-4 py-2 rounded-full">닫기</button>
         </div>
     </div>
 
@@ -428,63 +332,40 @@
         <div class="container mx-auto p-4 flex justify-between items-center">
             <h1 class="text-3xl font-bold text-blue-600">My Website</h1>
             <nav class="space-x-4 flex items-center">
-                <button onclick="showSection('about')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="about">소개</button>
-                <button onclick="showSection('research')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="research">프로젝트</button>
-                <button onclick="showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="blog">블로그</button>
+                <button onclick="showSection('about')" class="nav-btn btn px-4 py-2 rounded-full" data-section="about">소개</button>
+                <button onclick="showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">프로젝트</button>
+                <button onclick="showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full" data-section="blog">블로그</button>
                 <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700">다크 모드</button>
+                <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">로그인</button>
+                <button id="logout-btn" class="btn bg-red-500 text-white px-4 py-2 rounded-full" style="display: none;">로그아웃</button>
             </nav>
         </div>
         <div class="container mx-auto px-4 pb-2 text-right">
-            <span id="login-status" class="text-xs text-gray-500">로그인 중...</span>
+            <span id="login-status" class="text-xs text-gray-500">초기화 중...</span>
         </div>
     </header>
 
     <main class="container mx-auto p-8">
-        <section id="about" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
-            <h2 class="text-4xl font-bold mb-6 text-center">Donghyuk Lee</h2>
-            <img src="IMG_6942.jpeg" alt="프로필 사진" class="rounded-full w-74 h-64 mx-auto mb-6 shadow-md">
-            <div class="prose max-w-none text-lg leading-relaxed">
-                <h3 class="text-2xl font-semibold mt-8 mb-4">Hello!</h3>
-                <p class="mb-4">I'm currently an undergraduate student at KAIST. During my time at a science high school, I conducted various research related to neurobiology and bioengineering. Most recently, I studied how to predict genotypes and improve data bias using artificial neural network algorithms. I plan to enter the Department of Electrical Engineering at KAIST and within the Computer Science Division. I have a broad interest in statistical inference models, information theory, and artificial intelligence models for research.</p>
-                <h3 class="text-2xl font-semibold mt-8 mb-4">Experience</h3>
-                <ul class="list-disc ml-6 space-y-2">
-                    <li>pre-URP at YOON LAB, Department of Biological Sciences, KAIST (2023.06 - 2023.09)</li>
-                </ul>
-                <h3 class="text-2xl font-semibold mt-8 mb-4">Education</h3>
-                <ul class="list-disc ml-6 space-y-2">
-                    <li>Gyeonggi Buk Science High School (2022.03 - 2025.01)</li>
-                    <li>KAIST, Department of Electrical & Electronic Engineering (2025.02 - )</li>
-                </ul>
-                <h3 class="text-2xl font-semibold mt-8 mb-4">Contact</h3>
-                <p>Email: <a href="mailto:dhlee4832@kaist.ac.kr" class="text-blue-500 hover:underline">dhlee4832@kaist.ac.kr</a></p>
-                <h3 class="text-2xl font-semibold mt-8 mb-4">My Previous Works</h3>
-                <ul class="list-disc ml-6 space-y-2">
-                    <li><a href="https://donghyuklee1.github.io/CV/assets/presentation_slides.pdf" class="text-blue-500 hover:underline">Drive Link</a></li>
-                </ul>
-            </div>
-        </section>
-
-        <section id="research" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
-            <h2 class="text-4xl font-bold mb-6 text-center">프로젝트</h2>
-            <div class="prose max-w-none text-lg leading-relaxed">
-                <h3 class="text-2xl font-semibold mt-8 mb-4">ML 기반 챗봇 개발</h3>
-                <p class="text-sm text-gray-500">2023.01 - 2023.06</p>
-                <p class="text-base mt-1">자연어 처리 기술을 활용해 사용자의 질문에 답변하는 챗봇을 개발했습니다. Transformer 모델을 기반으로 한 학습을 통해 높은 정확도를 달성했습니다.</p>
-                <h3 class="text-2xl font-semibold mt-8 mb-4">AI 기반 추천 시스템</h3>
-                <p class="text-sm text-gray-500">2022.09 - 2022.12</p>
-                <p class="text-base mt-1">사용자 행동 데이터를 분석하여 개인화된 콘텐츠를 추천하는 시스템을 구축했습니다. 협업 필터링 알고리즘을 개선하여 추천 성능을 향상시켰습니다.</p>
-            </div>
-        </section>
+        <section id="about" class="..."></section>
+        <section id="research" class="..."></section>
 
         <section id="blog" class="max-w-4xl mx-auto">
             <h2 class="text-4xl font-bold mb-6 text-center">블로그</h2>
             
-            <div class="card p-6 rounded-3xl shadow-lg mb-8 border border-gray-200">
-                <h3 class="text-2xl font-semibold mb-4">새 게시물 작성</h3>
-                <form id="new-post-form">
-                    <textarea id="new-post-content" rows="6" placeholder="여기에 게시물 내용을 작성하세요..." class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                    <button type="submit" class="btn w-full mt-4 bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors duration-200">게시물 올리기</button>
-                </form>
+            <div id="new-post-section" style="display: none;">
+                <div class="card p-6 rounded-3xl shadow-lg mb-8 border">
+                    <h3 class="text-2xl font-semibold mb-4">새 게시물 작성</h3>
+                    <form id="new-post-form">
+                        <textarea id="new-post-content" rows="6" placeholder="여기에 게시물 내용을 작성하세요..." class="w-full p-4 rounded-xl border"></textarea>
+                        <button type="submit" class="btn w-full mt-4 bg-blue-600 text-white p-3 rounded-full">게시물 올리기</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="login-prompt" class="card text-center p-8 rounded-3xl shadow-lg mb-8 border" style="display: none;">
+                <h3 class="text-2xl font-semibold mb-4">블로그에 글을 남겨보세요!</h3>
+                <p class="mb-6">로그인하여 다른 사람들과 생각을 공유하고 소통할 수 있습니다.</p>
+                <button onclick="document.getElementById('login-btn').click()" class="btn bg-blue-500 text-white px-6 py-3 rounded-full">로그인하고 글쓰기</button>
             </div>
             
             <div id="blog-posts-container">
