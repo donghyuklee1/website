@@ -46,7 +46,6 @@
     <script src="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.js"></script>
     
     <script type="module">
-        // Firebase v9 모듈러 API 대신 v8 호환성 API를 사용하도록 수정
         const firebaseConfig = {
             apiKey: "AIzaSyDZ73acZGuPE-9uwUy_90d2c4zQEEKOMvc",
             authDomain: "website-4b4f8.firebaseapp.com",
@@ -56,15 +55,13 @@
             appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
         };
 
-        // Firebase 초기화
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         const appId = firebaseConfig.projectId;
         
-        // --- 전역 변수 및 UI 요소 ---
         let userId;
-        let blogPostsRef;
+        let blogPostsUnsubscribe;
         const blogPostsData = {};
 
         const blogPostsContainer = document.getElementById('blog-posts-container');
@@ -84,14 +81,12 @@
         const loginButtons = [document.getElementById('login-btn'), document.getElementById('login-btn-mobile')];
         const logoutButtons = [document.getElementById('logout-btn'), document.getElementById('logout-btn-mobile')];
 
-
-        // --- FirebaseUI 설정 ---
         const ui = new firebaseui.auth.AuthUI(auth);
         const uiConfig = {
             callbacks: {
                 signInSuccessWithAuthResult: function(authResult, redirectUrl) {
                     hideLoginModal();
-                    return false; // 페이지 리디렉션을 막습니다.
+                    return false;
                 },
             },
             signInFlow: 'popup',
@@ -101,10 +96,8 @@
             ],
         };
 
-        // --- 인증 상태 리스너 ---
         auth.onAuthStateChanged(async (user) => {
             if (user && !user.isAnonymous) {
-                // 실제 사용자로 로그인한 경우
                 userId = user.uid;
                 loginStatus.innerHTML = `${user.displayName || user.email.split('@')[0]}님 환영합니다!`;
                 loginButtons.forEach(btn => btn.style.display = 'none');
@@ -118,7 +111,6 @@
                     document.documentElement.classList.add('dark');
                 }
             } else {
-                // 로그아웃 또는 익명 사용자인 경우
                 userId = user ? user.uid : null;
                 loginStatus.textContent = '로그인되지 않았습니다.';
                 loginButtons.forEach(btn => btn.style.display = 'inline-block');
@@ -134,8 +126,8 @@
         });
 
         function setupBlogListener() {
-            if (blogPostsRef) blogPostsRef(); // 기존 리스너 해제
-            blogPostsRef = db.collection(`artifacts/${appId}/public/data/blog_posts`)
+            if (blogPostsUnsubscribe) blogPostsUnsubscribe();
+            blogPostsUnsubscribe = db.collection(`artifacts/${appId}/public/data/blog_posts`)
                 .orderBy("timestamp", "desc")
                 .onSnapshot((snapshot) => {
                     blogPostsContainer.innerHTML = '';
@@ -154,7 +146,7 @@
              postElement.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
                     <div>
-                        <h3 class="text-2xl font-semibold mb-2">${post.content.split('\n')[0].substring(0, 50)}...</h3>
+                        <h3 class="text-2xl font-semibold mb-2">${post.title || '제목 없음'}</h3>
                         <p class="text-sm text-gray-500">작성자: ${post.authorName || '익명'}</p>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -171,7 +163,7 @@
                     <h4 class="font-semibold mb-2">댓글</h4>
                     <div id="comments-list-${postId}" class="space-y-2"></div>
                     <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
-                        <input type="text" name="commentContent" placeholder="댓글을 입력하세요..." class="w-full p-2 rounded-lg border">
+                        <input type="text" name="commentContent" placeholder="댓글을 입력하세요..." class="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">댓글 추가</button>
                     </form>
                 </div>
@@ -196,10 +188,15 @@
                 showModal('오류', '로그인이 필요합니다.');
                 return;
             }
+            const postTitle = document.getElementById('new-post-title').value;
             const postContent = document.getElementById('new-post-content').value;
-            if (postContent.trim() === '') return;
+            if (postTitle.trim() === '' || postContent.trim() === '') {
+                showModal('알림', '제목과 내용을 모두 입력해주세요.');
+                return;
+            }
 
             const newPost = {
+                title: postTitle,
                 content: postContent,
                 userId: user.uid,
                 authorName: user.displayName || user.email.split('@')[0],
@@ -210,6 +207,7 @@
 
             try {
                 await db.collection(`artifacts/${appId}/public/data/blog_posts`).add(newPost);
+                document.getElementById('new-post-title').value = '';
                 document.getElementById('new-post-content').value = '';
                 showModal('알림', '새로운 게시물이 추가되었습니다.');
             } catch (error) {
@@ -219,22 +217,27 @@
         });
         
         window.likePost = async (postId) => {
-            if (!auth.currentUser) { showModal('알림', '좋아요를 누르려면 로그인이 필요합니다.'); return; }
+            const user = auth.currentUser;
+            if (!user || user.isAnonymous) { showModal('알림', '좋아요를 누르려면 로그인이 필요합니다.'); return; }
             const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
             const post = blogPostsData[postId];
             let newLikes = post.likes || [];
-            if (newLikes.includes(auth.currentUser.uid)) {
-                newLikes = newLikes.filter(id => id !== auth.currentUser.uid);
+            if (newLikes.includes(user.uid)) {
+                newLikes = newLikes.filter(id => id !== user.uid);
             } else {
-                newLikes.push(auth.currentUser.uid);
+                newLikes.push(user.uid);
             }
             await postRef.update({ likes: newLikes });
         };
         
         window.addComment = async (postId, commentContent) => {
-            if (!auth.currentUser) { showModal('알림', '댓글을 작성하려면 로그인이 필요합니다.'); return; }
-            if (!commentContent.trim()) return;
             const user = auth.currentUser;
+            if (!user || user.isAnonymous) { 
+                showModal('알림', '댓글을 작성하려면 로그인이 필요합니다.'); 
+                return; 
+            }
+            if (!commentContent.trim()) return;
+            
             const newComment = {
                 userId: user.uid,
                 authorName: user.displayName || user.email.split('@')[0],
@@ -242,7 +245,12 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
             const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
-            await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
+            try {
+                await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
+            } catch (error) {
+                console.error("댓글 추가 오류:", error);
+                showModal('오류', '댓글 추가에 실패했습니다. 다시 시도해 주세요.');
+            }
         };
         
         window.deletePost = async (postId) => {
@@ -254,16 +262,20 @@
         
         window.editPost = (postId) => {
              const post = blogPostsData[postId];
-             showModal('게시물 수정', `<textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border">${post.content}</textarea>`, () => {
+             const modalHTML = `
+                <input type="text" id="edit-post-title" value="${post.title || ''}" class="w-full p-3 mb-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">${post.content}</textarea>
+             `;
+             showModal('게시물 수정', modalHTML, () => {
+                const newTitle = document.getElementById('edit-post-title').value;
                 const newContent = document.getElementById('edit-post-content').value;
-                if (newContent) {
-                    db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({ content: newContent })
+                if (newTitle && newContent) {
+                    db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({ title: newTitle, content: newContent })
                       .catch(error => showModal('오류', '게시물 수정에 실패했습니다.'));
                 }
             }, true);
         };
 
-        // --- UI 및 모달 로직 ---
         let currentSectionId = 'about';
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('main section').forEach(section => {
@@ -278,7 +290,8 @@
             const currentSection = document.getElementById(currentSectionId);
             const nextSection = document.getElementById(sectionId);
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+            // 모바일과 데스크탑의 버튼 모두 active 클래스 동기화
+            document.querySelectorAll(`.nav-btn[data-section="${sectionId}"]`).forEach(btn => btn.classList.add('active'));
 
             if (currentSection) currentSection.style.opacity = '0';
             setTimeout(() => {
@@ -300,8 +313,8 @@
             
             if (showConfirmCancel && onConfirm) {
                  const confirmBtn = document.createElement('button');
-                 confirmBtn.className = 'modal-action-btn btn bg-red-500 text-white px-4 py-2 rounded-full mr-2';
-                 confirmBtn.textContent = '확인';
+                 confirmBtn.className = 'modal-action-btn btn bg-blue-500 text-white px-4 py-2 rounded-full mr-2';
+                 confirmBtn.textContent = '저장';
                  confirmBtn.onclick = () => { onConfirm(); hideModal(); };
                  modalCloseBtn.parentNode.insertBefore(confirmBtn, modalCloseBtn);
             }
@@ -319,9 +332,15 @@
         document.getElementById('login-modal-close-btn').addEventListener('click', hideLoginModal);
         
         const toggleDarkMode = async () => {
-            if(!auth.currentUser || auth.currentUser.isAnonymous) return;
             const isDarkMode = document.documentElement.classList.toggle('dark');
-            await db.doc(`artifacts/${appId}/users/${auth.currentUser.uid}/settings/theme`).set({ darkMode: isDarkMode });
+            const user = auth.currentUser;
+            if (user && !user.isAnonymous) {
+                try {
+                    await db.doc(`artifacts/${appId}/users/${user.uid}/settings/theme`).set({ darkMode: isDarkMode });
+                } catch (error) {
+                    console.error("다크 모드 설정 저장 실패:", error);
+                }
+            }
         };
         darkModeToggle.addEventListener('click', toggleDarkMode);
         darkModeToggleMobile.addEventListener('click', toggleDarkMode);
@@ -329,7 +348,7 @@
         ui.start('#firebaseui-auth-container', uiConfig);
     </script>
     
-    <div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50">
+    <div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50 p-4">
         <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-md text-center">
             <h3 id="modal-title" class="text-xl font-semibold mb-4"></h3>
             <div id="modal-content" class="text-gray-600 dark:text-gray-300 mb-6 text-left"></div>
@@ -337,7 +356,7 @@
         </div>
     </div>
 
-    <div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50">
+    <div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50 p-4">
         <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6 text-center">로그인</h3>
             <div id="firebaseui-auth-container"></div>
@@ -384,7 +403,7 @@
     <main class="container mx-auto p-8">
         <section id="about" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
             <h2 class="text-4xl font-bold mb-6 text-center">Donghyuk Lee</h2>
-            <img src="IMG_6942.jpeg" alt="프로필 사진" class="rounded-full w-74 h-64 mx-auto mb-6 shadow-md">
+            <img src="https://placehold.co/256x256/EFEFEF/333333?text=Profile" alt="프로필 사진" class="rounded-full w-64 h-64 mx-auto mb-6 shadow-md">
             <div class="prose max-w-none text-lg leading-relaxed">
                 <h3 class="text-2xl font-semibold mt-8 mb-4">Hello!</h3>
                 <p class="mb-4">I'm currently an undergraduate student at KAIST. During my time at a science high school, I conducted various research related to neurobiology and bioengineering. Most recently, I studied how to predict genotypes and improve data bias using artificial neural network algorithms. I plan to enter the Department of Electrical Engineering at KAIST and within the Computer Science Division. I have a broad interest in statistical inference models, information theory, and artificial intelligence models for research.</p>
@@ -425,7 +444,8 @@
                 <div class="card p-6 rounded-3xl shadow-lg mb-8 border">
                     <h3 class="text-2xl font-semibold mb-4">새 게시물 작성</h3>
                     <form id="new-post-form">
-                        <textarea id="new-post-content" rows="6" placeholder="여기에 게시물 내용을 작성하세요..." class="w-full p-4 rounded-xl border"></textarea>
+                        <input type="text" id="new-post-title" placeholder="제목을 입력하세요" class="w-full p-3 mb-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <textarea id="new-post-content" rows="6" placeholder="내용을 작성하세요..." class="w-full p-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                         <button type="submit" class="btn w-full mt-4 bg-blue-600 text-white p-3 rounded-full">게시물 올리기</button>
                     </form>
                 </div>
@@ -434,7 +454,7 @@
             <div id="login-prompt" class="card text-center p-8 rounded-3xl shadow-lg mb-8 border" style="display: none;">
                 <h3 class="text-2xl font-semibold mb-4">블로그에 글을 남겨보세요!</h3>
                 <p class="mb-6">로그인하여 다른 사람들과 생각을 공유하고 소통할 수 있습니다.</p>
-                <button onclick="document.getElementById('login-modal').classList.remove('opacity-0', 'pointer-events-none')" class="btn bg-blue-500 text-white px-6 py-3 rounded-full">로그인하고 글쓰기</button>
+                <button onclick="showLoginModal()" class="btn bg-blue-500 text-white px-6 py-3 rounded-full">로그인하고 글쓰기</button>
             </div>
             
             <div id="blog-posts-container"></div>
