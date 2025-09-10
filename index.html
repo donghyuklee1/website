@@ -52,7 +52,7 @@
             projectId: "website-4b4f8",
             storageBucket: "website-4b4f8.appspot.com",
             messagingSenderId: "965602529024",
-            appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
+            appId: "1:965602529024:web:14b4ea2f7f214b7dbade5",
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -66,7 +66,9 @@
 
         const blogPostsContainer = document.getElementById('blog-posts-container');
         const newPostForm = document.getElementById('new-post-form');
-        const loginStatus = document.getElementById('login-status');
+        // loginStatus를 데스크탑과 모바일로 분리하여 관리합니다.
+        const loginStatusDesktop = document.getElementById('login-status-desktop');
+        const loginStatusMobile = document.getElementById('login-status-mobile');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const darkModeToggleMobile = document.getElementById('dark-mode-toggle-mobile');
         const modal = document.getElementById('modal');
@@ -97,9 +99,17 @@
         };
 
         auth.onAuthStateChanged(async (user) => {
+            // 표시할 메시지를 변수로 먼저 정의합니다.
+            const statusMessage = user && !user.isAnonymous 
+                ? `${user.displayName || user.email.split('@')[0]}님 환영합니다!`
+                : '로그인되지 않았습니다.';
+            
+            // 데스크탑과 모바일 상태 메시지를 모두 업데이트합니다.
+            if (loginStatusDesktop) loginStatusDesktop.innerHTML = statusMessage;
+            if (loginStatusMobile) loginStatusMobile.innerHTML = statusMessage;
+
             if (user && !user.isAnonymous) {
                 userId = user.uid;
-                loginStatus.innerHTML = `${user.displayName || user.email.split('@')[0]}님 환영합니다!`;
                 loginButtons.forEach(btn => btn.style.display = 'none');
                 logoutButtons.forEach(btn => btn.style.display = 'inline-block');
                 newPostSection.style.display = 'block';
@@ -112,7 +122,6 @@
                 }
             } else {
                 userId = user ? user.uid : null;
-                loginStatus.textContent = '로그인되지 않았습니다.';
                 loginButtons.forEach(btn => btn.style.display = 'inline-block');
                 logoutButtons.forEach(btn => btn.style.display = 'none');
                 newPostSection.style.display = 'none';
@@ -369,16 +378,25 @@
 
     <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-40">
         <div class="container mx-auto p-4 flex justify-between items-center relative">
-            <a href="#" onclick="event.preventDefault(); showSection('about')" class="text-3xl font-bold text-blue-600 cursor-pointer no-underline">My Website</a>
+            <a href="#" onclick="event.preventDefault(); showSection('about')" class="cursor-pointer">
+                <img src="YOUR_LOGO_IMAGE_PATH_HERE" alt="My Website Logo" class="h-10 w-auto"> <!-- 로고 높이를 h-10 (40px)으로 설정 -->
+            </a>
             
-            <nav class="hidden md:flex space-x-2 items-center">
-                <button onclick="showSection('about')" class="nav-btn btn px-4 py-2 rounded-full" data-section="about">소개</button>
-                <button onclick="showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">프로젝트</button>
-                <button onclick="showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full" data-section="blog">블로그</button>
-                <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700">다크 모드</button>
-                <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">로그인</button>
-                <button id="logout-btn" class="btn bg-red-500 text-white px-4 py-2 rounded-full" style="display: none;">로그아웃</button>
-            </nav>
+            <!-- 데스크탑 오른쪽 영역 (버튼과 상태 메시지를 포함하는 컨테이너) -->
+            <div class="hidden md:flex flex-col items-end">
+                <nav class="flex space-x-2 items-center">
+                    <button onclick="showSection('about')" class="nav-btn btn px-4 py-2 rounded-full" data-section="about">소개</button>
+                    <button onclick="showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">프로젝트</button>
+                    <button onclick="showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full" data-section="blog">블로그</button>
+                    <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700">다크 모드</button>
+                    <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">로그인</button>
+                    <button id="logout-btn" class="btn bg-red-500 text-white px-4 py-2 rounded-full" style="display: none;">로그아웃</button>
+                </nav>
+                <!-- 데스크탑용 상태 메시지 -->
+                <div class="h-4 mt-1">
+                    <span id="login-status-desktop" class="text-xs text-gray-500"></span>
+                </div>
+            </div>
             
             <div class="md:hidden">
                 <button id="hamburger-btn" class="focus:outline-none p-2">
@@ -395,18 +413,18 @@
                     <button id="login-btn-mobile" class="btn w-full py-2 bg-blue-500 text-white rounded-full" style="display: none;">로그인</button>
                     <button id="logout-btn-mobile" class="btn w-full py-2 bg-red-500 text-white rounded-full" style="display: none;">로그아웃</button>
                 </nav>
+                <!-- 모바일용 상태 메시지 -->
+                <div class="text-center pb-4">
+                     <span id="login-status-mobile" class="text-xs text-gray-500"></span>
+                </div>
             </div>
-        </div>
-
-        <div class="container mx-auto px-4 pb-2 text-right">
-            <span id="login-status" class="text-xs text-gray-500">초기화 중...</span>
         </div>
     </header>
 
     <main class="container mx-auto p-8">
         <section id="about" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
             <h2 class="text-4xl font-bold mb-6 text-center">Donghyuk Lee</h2>
-            <img src="IMG_6942.jpeg" alt="프로필 사진" class="rounded-3xl w-75 h-64 mx-auto mb-6 shadow-md">
+            <img src="YOUR_GITHUB_IMAGE_PATH_HERE" alt="프로필 사진" class="rounded-full w-64 h-64 mx-auto mb-6 shadow-md">
             <div class="prose max-w-none text-lg leading-relaxed">
                 <h3 class="text-2xl font-semibold mt-8 mb-4">Hello!</h3>
                 <p class="mb-4">I'm currently an undergraduate student at KAIST. During my time at a science high school, I conducted various research related to neurobiology and bioengineering. Most recently, I studied how to predict genotypes and improve data bias using artificial neural network algorithms. I plan to enter the Department of Electrical Engineering at KAIST and within the Computer Science Division. I have a broad interest in statistical inference models, information theory, and artificial intelligence models for research.</p>
@@ -466,5 +484,7 @@
 
 </body>
 </html>
+
+
 
 
