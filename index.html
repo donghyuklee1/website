@@ -34,19 +34,46 @@
         .modal {
             transition: opacity 0.3s ease-in-out;
         }
+
+        /* --- 추가된 시각 효과 스타일 --- */
+        .nav-btn.active {
+            font-weight: 700;
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            border-radius: 0;
+        }
+        .dark .nav-btn.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+        
+        .card, .btn {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s, color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .dark .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        main section {
+            transition: opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Firebase Imports and Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        setLogLevel('Debug');
-
+        
         // Global Variables
         let db;
         let auth;
@@ -56,9 +83,6 @@
         const blogPostsData = {};
 
         // UI Elements
-        const aboutSection = document.getElementById('about');
-        const researchSection = document.getElementById('research');
-        const blogSection = document.getElementById('blog');
         const blogPostsContainer = document.getElementById('blog-posts-container');
         const newPostForm = document.getElementById('new-post-form');
         const loginStatus = document.getElementById('login-status');
@@ -68,32 +92,23 @@
         const modalContent = document.getElementById('modal-content');
         const modalCloseBtn = document.getElementById('modal-close-btn');
 
-        // Initial UI state
-        aboutSection.style.display = 'block';
-        researchSection.style.display = 'none';
-        blogSection.style.display = 'none';
-
         // Firebase Initialization and Auth
-        // Canvas 환경에서 자동으로 설정이 주입됩니다.
-        // 외부에서 배포할 경우, 아래 firebaseConfig 객체를 본인의 Firebase 프로젝트 설정으로 교체해주세요.
         const firebaseConfig = {
             apiKey: "AIzaSyDZ73acZGuPE-9uwUy_90d2c4zQEEKOMvc",
             authDomain: "website-4b4f8.firebaseapp.com",
             projectId: "website-4b4f8",
-            storageBucket: "website-4b4f8.firebasestorage.app",
+            storageBucket: "website-4b4f8.appspot.com",
             messagingSenderId: "965602529024",
             appId: "1:965602529024:web:14b4ea2f7f2145b7dbade5",
             measurementId: "G-DKL0JSXECD"
         };
         appId = firebaseConfig.projectId;
-        const initialAuthToken = null;
 
         if (Object.keys(firebaseConfig).length > 0) {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
             
-            // 익명 로그인 시도
             signInAnonymously(auth).catch(error => {
                 console.error("Error signing in anonymously:", error);
                 showModal('익명 로그인 오류', '익명 로그인 중 오류가 발생했습니다.');
@@ -102,10 +117,9 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
-                    loginStatus.textContent = `사용자 ID: ${userId}`;
+                    loginStatus.textContent = `사용자 ID: ${userId.substring(0, 10)}...`;
                     blogPostsRef = collection(db, `artifacts/${appId}/public/data/blog_posts`);
                     
-                    // Load dark mode preference
                     const userSettingsRef = doc(db, `artifacts/${appId}/users/${userId}/settings/theme`);
                     const userSettingsSnap = await getDoc(userSettingsRef);
                     if (userSettingsSnap.exists() && userSettingsSnap.data().darkMode) {
@@ -138,7 +152,7 @@
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h3 class="text-2xl font-semibold mb-2">${post.content.split('\n')[0].substring(0, 50)}...</h3>
-                                <p class="text-sm text-gray-500">작성자: ${post.userId}</p>
+                                <p class="text-sm text-gray-500">작성자: ${post.userId.substring(0,8)}...</p>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <span id="likes-count-${postId}" class="text-red-500">${post.likes ? post.likes.length : 0}</span>
@@ -163,16 +177,6 @@
                         </div>
                         <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
                         
-                        <!-- Gemini API Buttons -->
-                        <div class="flex items-center space-x-2 mt-4">
-                            <button onclick="summarizePost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition-colors duration-200">
-                                게시물 요약 ✨
-                            </button>
-                            <button onclick="readPostAloud('${postId}')" class="btn bg-green-500 text-white px-3 py-1 rounded-full text-sm hover:bg-green-600 transition-colors duration-200">
-                                음성으로 듣기 ✨
-                            </button>
-                        </div>
-                        
                         <div class="comments-container border-t pt-4 mt-4">
                             <h4 class="font-semibold mb-2">댓글</h4>
                             <ul id="comments-list-${postId}" class="list-disc ml-5 space-y-2"></ul>
@@ -184,7 +188,6 @@
                     `;
                     blogPostsContainer.appendChild(postElement);
                     
-                    // Render comments
                     const commentsList = document.getElementById(`comments-list-${postId}`);
                     if (post.comments) {
                         post.comments.forEach(comment => {
@@ -204,10 +207,8 @@
             
             let newLikes = post.likes || [];
             if (newLikes.includes(userId)) {
-                // User has already liked, so unlike
                 newLikes = newLikes.filter(id => id !== userId);
             } else {
-                // User has not liked, so like
                 newLikes.push(userId);
             }
             
@@ -264,7 +265,7 @@
                 if (newContent !== null) {
                     updateDoc(doc(db, `artifacts/${appId}/public/data/blog_posts/${postId}`), {
                         content: newContent
-                    }).then(()u => showModal('알림', '게시물이 수정되었습니다.'))
+                    }).then(() => showModal('알림', '게시물이 수정되었습니다.')) // <-- 오타 수정
                     .catch(error => {
                         console.error("Error updating post:", error);
                         showModal('오류', '게시물 수정에 실패했습니다.');
@@ -301,13 +302,54 @@
         });
 
         // --- UI and Modal Logic ---
-        window.showSection = (sectionId) => {
-            document.querySelectorAll('main section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById(sectionId).style.display = 'block';
-        };
+        let currentSectionId = 'about'; // 현재 활성화된 섹션을 추적
 
+        // 페이지 로드 시 초기 상태 설정
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('main section').forEach(section => {
+                if (section.id !== currentSectionId) {
+                    section.style.display = 'none';
+                    section.style.opacity = '0';
+                } else {
+                    section.style.display = 'block';
+                    section.style.opacity = '1';
+                }
+            });
+            document.querySelector(`.nav-btn[data-section="${currentSectionId}"]`).classList.add('active');
+        });
+
+        window.showSection = (sectionId) => {
+            if (sectionId === currentSectionId) return; // 같은 버튼 클릭 시 아무것도 안 함
+
+            const currentSection = document.getElementById(currentSectionId);
+            const nextSection = document.getElementById(sectionId);
+
+            // 네비게이션 버튼 활성 상태 업데이트
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+
+            // 현재 섹션 페이드 아웃
+            if (currentSection) {
+                currentSection.style.opacity = '0';
+            }
+
+            // 0.3초 후 섹션 전환 및 새 섹션 페이드 인
+            setTimeout(() => {
+                if (currentSection) {
+                    currentSection.style.display = 'none';
+                }
+                if (nextSection) {
+                    nextSection.style.display = 'block';
+                    setTimeout(() => {
+                        nextSection.style.opacity = '1';
+                    }, 20);
+                }
+                currentSectionId = sectionId;
+            }, 300); // CSS transition 시간과 일치
+        };
+        
         function showModal(title, content, onConfirm = null, isEdit = false) {
             modalTitle.textContent = title;
             modalContent.innerHTML = content;
@@ -335,11 +377,7 @@
                 cancelBtn.onclick = hideModal;
                 modalContent.appendChild(cancelBtn);
             } else {
-                const okBtn = document.createElement('button');
-                okBtn.className = 'btn bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors duration-200';
-                okBtn.textContent = '확인';
-                okBtn.onclick = hideModal;
-                modalContent.appendChild(okBtn);
+                // '확인' 버튼을 모달 내용의 일부가 아닌 닫기 버튼과 별도로 관리
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modal.classList.add('opacity-100');
@@ -358,165 +396,24 @@
             const userSettingsRef = doc(db, `artifacts/${appId}/users/${userId}/settings/theme`);
             await setDoc(userSettingsRef, { darkMode: isDarkMode });
         });
-
-        // --- Gemini API Logic ---
-        window.summarizePost = async (postId) => {
-            const post = blogPostsData[postId];
-            if (!post || !post.content) {
-                showModal('오류', '게시물을 찾을 수 없습니다.');
-                return;
-            }
-            
-            showModal('게시물 요약 중...', '잠시만 기다려주세요...', null);
-
-            try {
-                const userQuery = `이 블로그 게시물을 한국어로 간결하게 요약해줘: \n\n${post.content}`;
-                
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    tools: [{ "google_search": {} }],
-                    systemInstruction: {
-                        parts: [{ text: "당신은 세계적인 요약 전문가입니다. 제공된 텍스트의 핵심 내용을 정확하고 간결하게 요약해 주세요. 요약된 내용만 응답에 포함해야 합니다." }]
-                    },
-                };
-                
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '요약 내용을 생성할 수 없습니다.';
-                
-                showModal('게시물 요약 ✨', `<p class="whitespace-pre-wrap">${text}</p>`);
-            } catch (error) {
-                console.error("Error summarizing post:", error);
-                showModal('오류', '요약 기능을 사용할 수 없습니다.');
-            }
-        };
-
-        window.readPostAloud = async (postId) => {
-            const post = blogPostsData[postId];
-            if (!post || !post.content) {
-                showModal('오류', '게시물을 찾을 수 없습니다.');
-                return;
-            }
-
-            showModal('음성 변환 중...', '잠시만 기다려주세요...', null);
-            
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: post.content }] }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: {
-                            voiceConfig: {
-                                prebuiltVoiceConfig: { voiceName: "Kore" }
-                            }
-                        }
-                    },
-                    model: "gemini-2.5-flash-preview-tts"
-                };
-
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                const audioData = result?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-                const mimeType = result?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.mimeType;
-
-                if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                    const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
-                    const pcmData = base64ToArrayBuffer(audioData);
-                    const pcm16 = new Int16Array(pcmData);
-                    const wavBlob = pcmToWav(pcm16, sampleRate);
-                    const audioUrl = URL.createObjectURL(wavBlob);
-                    
-                    const audioPlayer = new Audio(audioUrl);
-                    audioPlayer.play();
-                    hideModal();
-                } else {
-                    showModal('오류', '음성 데이터를 가져오는 데 실패했습니다.');
-                }
-            } catch (error) {
-                console.error("Error reading post aloud:", error);
-                showModal('오류', '음성 변환 기능을 사용할 수 없습니다.');
-            }
-        };
-
-        // Helper functions for audio processing
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function pcmToWav(pcmData, sampleRate) {
-            const wavData = new ArrayBuffer(44 + pcmData.length * 2);
-            const view = new DataView(wavData);
-            
-            // WAV header
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcmData.length * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true); // Mono
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, pcmData.length * 2, true);
-            
-            // PCM data
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(44 + i * 2, pcmData[i], true);
-            }
-            
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
-        function writeString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
-            }
-        }
     </script>
     
-    <!-- Modal -->
     <div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50">
-        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-96 max-w-lg text-center">
+        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-md text-center">
             <h3 id="modal-title" class="text-xl font-semibold mb-4"></h3>
-            <div id="modal-content" class="text-gray-600 dark:text-gray-300 mb-4 text-left"></div>
+            <div id="modal-content" class="text-gray-600 dark:text-gray-300 mb-6 text-left"></div>
             <button id="modal-close-btn" class="btn bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors duration-200">닫기</button>
         </div>
     </div>
 
-    <!-- Header & Navigation -->
     <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-40">
         <div class="container mx-auto p-4 flex justify-between items-center">
             <h1 class="text-3xl font-bold text-blue-600">My Website</h1>
             <nav class="space-x-4 flex items-center">
-                <button onclick="showSection('about')" class="btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">소개</button>
-                <button onclick="showSection('research')" class="btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">프로젝트</button>
-                <button onclick="showSection('blog')" class="btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">블로그</button>
-                <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-200">다크 모드</button>
+                <button onclick="showSection('about')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="about">소개</button>
+                <button onclick="showSection('research')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="research">프로젝트</button>
+                <button onclick="showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" data-section="blog">블로그</button>
+                <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700">다크 모드</button>
             </nav>
         </div>
         <div class="container mx-auto px-4 pb-2 text-right">
@@ -524,9 +421,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container mx-auto p-8">
-        <!-- About Section (소개) -->
         <section id="about" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
             <h2 class="text-4xl font-bold mb-6 text-center">Donghyuk Lee</h2>
             <img src="IMG_6942.jpeg" alt="프로필 사진" class="rounded-full w-74 h-64 mx-auto mb-6 shadow-md">
@@ -551,8 +446,7 @@
             </div>
         </section>
 
-        <!-- Research Section (프로젝트) -->
-        <section id="research" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200" style="display:none;">
+        <section id="research" class="max-w-4xl mx-auto card p-8 rounded-3xl shadow-lg border border-gray-200">
             <h2 class="text-4xl font-bold mb-6 text-center">프로젝트</h2>
             <div class="prose max-w-none text-lg leading-relaxed">
                 <h3 class="text-2xl font-semibold mt-8 mb-4">ML 기반 챗봇 개발</h3>
@@ -564,11 +458,9 @@
             </div>
         </section>
 
-        <!-- Blog Section (블로그) -->
-        <section id="blog" class="max-w-4xl mx-auto" style="display:none;">
+        <section id="blog" class="max-w-4xl mx-auto">
             <h2 class="text-4xl font-bold mb-6 text-center">블로그</h2>
             
-            <!-- New Post Form -->
             <div class="card p-6 rounded-3xl shadow-lg mb-8 border border-gray-200">
                 <h3 class="text-2xl font-semibold mb-4">새 게시물 작성</h3>
                 <form id="new-post-form">
@@ -577,10 +469,8 @@
                 </form>
             </div>
             
-            <!-- Blog Posts Container -->
             <div id="blog-posts-container">
-                <!-- Blog posts will be dynamically loaded here -->
-            </div>
+                </div>
         </section>
     </main>
 </body>
