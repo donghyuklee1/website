@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" class=""> <head>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KAIST 학부생 이동혁의 개인 웹사이트입니다. 연구, 이력, 그리고 커뮤니티 공간을 제공합니다.">
@@ -9,46 +10,58 @@
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.1/firebase-ui-auth.css" />
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .modal, .content-section { transition: opacity 0.3s ease-in-out; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .dark body { background-color: #1a202c; color: #e2e8f0; }
+        .dark .card { background-color: #2d3748; border-color: #4a5568; }
+        .dark .btn { background-color: #4a5568; color: #e2e8f0; }
+        .dark input, .dark textarea { background-color: #4a5568; border-color: #4a5568; color: #e2e8f0; }
+        .dark .comment-box { background-color: #4a5568; }
+        .modal { transition: opacity 0.3s ease-in-out; }
         
         .nav-btn {
+            color: #374151;
             transition: all 0.3s ease-in-out;
         }
-        .nav-btn:not(.active):hover {
-            transform: translateY(-2px);
+        .dark .nav-btn {
+            color: #d1d5db;
         }
+
+        .nav-btn:not(.active):hover { background-color: #e5e7eb; transform: translateY(-2px); }
+        .dark .nav-btn:not(.active):hover { background-color: #374151; }
+        
         .nav-btn.active {
+            font-weight: 600;
+            background-color: #3b82f6;
+            color: #ffffff;
             box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
             transform: translateY(-2px);
         }
-        .nav-btn.active:hover {
-            filter: brightness(1.1);
+        .nav-btn.active:hover { filter: brightness(1.1); }
+
+        .content-section {
+            transition: opacity 0.3s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
 
     <div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50 p-4">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-md">
-            <h3 id="modal-title" class="text-xl font-semibold mb-4 text-center dark:text-white"></h3>
+        <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg w-full max-w-md text-center">
+            <h3 id="modal-title" class="text-xl font-semibold mb-4"></h3>
             <div id="modal-content" class="text-gray-600 dark:text-gray-300 mb-6 text-left"></div>
-            <div class="flex justify-end space-x-2">
-                <button id="modal-confirm-btn" class="modal-action-btn btn bg-blue-500 text-white px-4 py-2 rounded-full hidden">Save</button>
-                <button id="modal-close-btn" class="btn bg-gray-300 dark:bg-gray-600 px-4 py-2 rounded-full">Close</button>
-            </div>
+            <button id="modal-close-btn" class="btn bg-gray-300 px-4 py-2 rounded-full">Close</button>
         </div>
     </div>
 
     <div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none z-50 p-4">
         <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg w-full max-w-md">
-            <h3 class="text-2xl font-bold mb-6 text-center dark:text-white">Login</h3>
+            <h3 class="text-2xl font-bold mb-6 text-center">Login</h3>
             <div id="firebaseui-auth-container"></div>
-            <button id="login-modal-close-btn" class="w-full mt-4 btn bg-gray-300 dark:bg-gray-600 px-4 py-2 rounded-full">Close</button>
+            <button id="login-modal-close-btn" class="w-full mt-4 btn bg-gray-300 px-4 py-2 rounded-full">Close</button>
         </div>
     </div>
 
-    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-40 transition-colors duration-300">
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center relative">
             <a href="#" onclick="event.preventDefault(); window.showSection('about')" class="cursor-pointer">
                 <img src="image.png" alt="welcome logo" class="h-12 sm:h-16 w-auto"> 
@@ -56,15 +69,15 @@
             
             <div class="hidden md:flex flex-col items-end">
                 <nav class="flex space-x-2 items-center">
-                    <button onclick="window.showSection('about')" class="nav-btn btn px-4 py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="about">About</button>
-                    <button onclick="window.showSection('research')" class="nav-btn btn px-4 py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="research">CV</button>
-                    <button onclick="window.showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="blog">Com.</button>
-                    <button id="dark-mode-toggle" class="btn p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl" aria-label="Toggle dark mode">🌓</button>
+                    <button onclick="window.showSection('about')" class="nav-btn btn px-4 py-2 rounded-full" data-section="about">About</button>
+                    <button onclick="window.showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">CV</button>
+                    <button onclick="window.showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full" data-section="blog">Com.</button>
+                    <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">🌓</button>
                     <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">Login</button>
                     <button id="logout-btn" class="btn bg-red-500 text-white px-4 py-2 rounded-full" style="display: none;">Logout</button>
                 </nav>
                 <div class="h-4 mt-1">
-                    <span id="login-status-desktop" class="text-xs text-gray-500 dark:text-gray-400"></span>
+                    <span id="login-status-desktop" class="text-xs text-gray-500"></span>
                 </div>
             </div>
             
@@ -76,37 +89,37 @@
             
             <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-800 shadow-lg">
                 <nav class="flex flex-col items-center p-4 space-y-2">
-                    <button onclick="window.showSection('about')" class="nav-btn btn w-full py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="about">About</button>
-                    <button onclick="window.showSection('research')" class="nav-btn btn w-full py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="research">CV</button>
-                    <button onclick="window.showSection('blog')" class="nav-btn btn w-full py-2 rounded-full dark:text-gray-200 text-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700" data-section="blog">Com.</button>
-                    <button id="dark-mode-toggle-mobile" class="btn w-full py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl" aria-label="Toggle dark mode">🌓</button>
+                    <button onclick="window.showSection('about')" class="nav-btn btn w-full py-2 rounded-full" data-section="about">About</button>
+                    <button onclick="window.showSection('research')" class="nav-btn btn w-full py-2 rounded-full" data-section="research">CV</button>
+                    <button onclick="window.showSection('blog')" class="nav-btn btn w-full py-2 rounded-full" data-section="blog">Com.</button>
+                    <button id="dark-mode-toggle-mobile" class="btn w-full py-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">🌓</button>
                     <button id="login-btn-mobile" class="btn w-full py-2 bg-blue-500 text-white rounded-full" style="display: none;">Login</button>
                     <button id="logout-btn-mobile" class="btn w-full py-2 bg-red-500 text-white rounded-full" style="display: none;">Logout</button>
                 </nav>
                 <div class="text-center pb-4">
-                    <span id="login-status-mobile" class="text-xs text-gray-500 dark:text-gray-400"></span>
+                    <span id="login-status-mobile" class="text-xs text-gray-500"></span>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="container mx-auto p-4 sm:p-8">
-        <section id="about" class="hidden content-section max-w-4xl mx-auto card bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <section id="about" class="max-w-4xl mx-auto card p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 content-section">
             <h2 class="text-3xl sm:text-4xl font-bold mb-6 text-center">Welcome to my personal website!</h2>
             <img src="IMG_5570.jpeg" alt="프로필 사진" class="rounded-full w-40 h-40 sm:w-60 sm:h-60 mx-auto mb-6 shadow-md object-cover">
-            <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed">
-                <h3>Hello!</h3>
-                <p>I'm currently an undergraduate student at KAIST. During my time at a science high school, I conducted various research related to neurobiology and bioengineering. Most recently, I studied how to predict genotypes and improve data bias using artificial neural network algorithms. I plan to enter the Department of Electrical Engineering at KAIST and within the Computer Science Division. I have a broad interest in statistical inference models, information theory, and artificial intelligence models for research.</p>
-                <h3>Experience</h3>
-                <ul>
+            <div class="prose max-w-none text-base sm:text-lg leading-relaxed">
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Hello!</h3>
+                <p class="mb-4">I'm currently an undergraduate student at KAIST. During my time at a science high school, I conducted various research related to neurobiology and bioengineering. Most recently, I studied how to predict genotypes and improve data bias using artificial neural network algorithms. I plan to enter the Department of Electrical Engineering at KAIST and within the Computer Science Division. I have a broad interest in statistical inference models, information theory, and artificial intelligence models for research.</p>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Experience</h3>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>pre-URP at YOON LAB, Department of Biological Sciences, KAIST (2023.06 - 2023.09)</li>
                 </ul>
-                <h3>Education</h3>
-                <ul>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Education</h3>
+                <ul class="list-disc ml-6 space-y-2">
                     <li>Gyeonggi Buk Science High School (2022.03 - 2025.01)</li>
                     <li>KAIST, Department of Electrical & Electronic Engineering (2025.02 - )</li>
                 </ul>
-                <h3>Contact</h3>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Contact</h3>
                 <div class="flex items-center space-x-4">
                     <a href="https://www.linkedin.com/in/%EB%8F%99%ED%98%81-%EC%9D%B4-140a622b0/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
                         <img src="linkedin_logo.png" alt="LinkedIn" class="h-8 w-8">
@@ -114,73 +127,73 @@
                     <a href="https://www.instagram.com/dhleethan/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
                         <img src="instagram_logo.png" alt="Instagram" class="h-8 w-8">
                     </a>
-                    <div class="border-l border-gray-400 dark:border-gray-500 h-6"></div>
-                    <a href="mailto:dhlee4832@kaist.ac.kr" class="text-blue-500 hover:underline transition-colors hover:text-blue-700 dark:hover:text-blue-300">dhlee4832@kaist.ac.kr</a>
+                    <div class="border-l border-gray-400 dark:border-gray-500 h-6 mx-2"></div>
+                    <a href="mailto:dhlee4832@kaist.ac.kr" class="text-blue-500 hover:underline text-base sm:text-lg transition-colors hover:text-blue-700 dark:hover:text-blue-300">dhlee4832@kaist.ac.kr</a>
                 </div>
-                <h3>My Previous Works</h3>
-                <ul>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">My Previous Works</h3>
+                <ul class="list-disc ml-6 space-y-2">
                     <li><a href="https://donghyuklee1.github.io/CV/assets/presentation_slides.pdf" class="text-blue-500 hover:underline">Drive Link</a></li>
                 </ul>
             </div>
         </section>
 
-        <section id="research" class="hidden content-section max-w-4xl mx-auto card bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <section id="research" class="max-w-4xl mx-auto card p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 content-section">
             <h2 class="text-3xl sm:text-4xl font-bold mb-6 text-center">Bio(-2024.)</h2>
-            <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed">
-                <h3>Awards and Major Achievements</h3>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 Gyeonggi Science Fair Excellence Award (2nd place):</b> Received the award for the study on 'Chemotaxis of the Pseudomonas fluorescens-powered biological microrobot towards cancer cells.'</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 National High School Science Olympiad Bronze Medal:</b> Awarded the bronze medal among 56 representatives from 28 science and gifted schools nationwide.</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 National Bio-Data Utilization Competition Pass:</b> The only high school student to pass with 'Development of a Non-invasive Comprehensive Diabetic Complication Diagnosis Model based on Liquid-Biopsy using XAI.'</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 Advanced Research Immersion Program for Science-Gifted Students (Pre-URP) with Honors:</b> Completed the Pre-URP program with honors.</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 Gyeonggi Northern Science High School In-house Life Science Experiment Challenge Grand Prize.</b></p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 Korea Brain Camp Completion.</b></p>
-                 <h3 class="mt-8">High School Research Activities</h3>
-                 <p class="text-sm text-gray-500">2022</p>
-                 <p class="mt-1"><b>2022 Creative Individual Research:</b> Conducted research on 'Fabrication of I202T mutant mCherry-pBHA transformed E.Coli using SDM and evaluation of pH sensitivity as a biocompatible micro pH-meter.'</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 1st Semester Creative Individual Research:</b> Studied the 'Epigenetic prediction of the mechanism inducing Alzheimer's disease through genetic network learning.'</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>2023 2nd Semester Creative Individual Research:</b> Performed research on 'Development of a Non-invasive Comprehensive Diabetic Complication Diagnosis Model based on Liquid-Biopsy using Explainable Artificial Intelligence (XAI).'</p>
-                 <p class="text-sm text-gray-500">2024</p>
-                 <p class="mt-1"><b>2024 1st Semester Creative Individual Research:</b> Studied the 'Correlation between the transformation and prediction of gene expression data using a Generative Adversarial Network and the improvement of epigenetic aging profiling performance.'</p>
-                 <p class="text-sm text-gray-500">2022 ~ 2024</p>
-                 <p class="mt-1"><b>RnE Research:</b> Conducted research on 'Chemotaxis of the Pseudomonas fluorescens-powered biological microrobot towards cancer cells' and 'The correlation between biofilm formation and R.palustris battery efficiency according to the 3D electrode pre-processing method.'</p>
-                 <p class="text-sm text-gray-500">2024</p>
-                 <p class="mt-1"><b>KAIST Collaborative Research:</b> Participated in research to 'elucidate cell-specific transcriptome dynamics during human cerebral organoid development.'</p>
-                 <h3 class="mt-8">In-house Seminars and Lectures</h3>
-                 <p class="text-sm text-gray-500">2022</p>
-                 <p class="mt-1"><b>AD Biology Abstract & System Biology seminar:</b> Presented on 'GNN models based on graph theory and the Alzheimer's disease induction mechanism.'</p>
-                 <p class="text-sm text-gray-500">2023</p>
-                 <p class="mt-1"><b>CoMBI Computational Science Seminar:</b> Conducted a seminar on the topic 'AI-driven drug discovery "Attention architecture".'</p>
-                 <p class="text-sm text-gray-500">2024</p>
-                 <p class="mt-1"><b>The Nitroplast Seminar:</b> Covered the topic 'The first organelle capable of nitrogen fixation has been discovered in eukaryotes.'</p>
-                 <p class="text-sm text-gray-500">2024</p>
-                 <p class="mt-1"><b>CoMBI Bioinformatics Seminar:</b> Gave lectures on the 'basics of bioinformatics and system biology.'</p>
+            <div class="prose max-w-none text-base sm:text-lg leading-relaxed">
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Awards and Major Achievements</h3>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 Gyeonggi Science Fair Excellence Award (2nd place):</b> Received the award for the study on 'Chemotaxis of the Pseudomonas fluorescens-powered biological microrobot towards cancer cells.'</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 National High School Science Olympiad Bronze Medal:</b> Awarded the bronze medal among 56 representatives from 28 science and gifted schools nationwide.</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 National Bio-Data Utilization Competition Pass:</b> The only high school student to pass with 'Development of a Non-invasive Comprehensive Diabetic Complication Diagnosis Model based on Liquid-Biopsy using XAI.'</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 Advanced Research Immersion Program for Science-Gifted Students (Pre-URP) with Honors:</b> Completed the Pre-URP program with honors.</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 Gyeonggi Northern Science High School In-house Life Science Experiment Challenge Grand Prize.</b></p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 Korea Brain Camp Completion.</b></p>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">High School Research Activities</h3>
+                <p class="text-sm text-gray-500">2022</p>
+                <p class="mt-1"><b>2022 Creative Individual Research:</b> Conducted research on 'Fabrication of I202T mutant mCherry-pBHA transformed E.Coli using SDM and evaluation of pH sensitivity as a biocompatible micro pH-meter.'</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 1st Semester Creative Individual Research:</b> Studied the 'Epigenetic prediction of the mechanism inducing Alzheimer's disease through genetic network learning.'</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>2023 2nd Semester Creative Individual Research:</b> Performed research on 'Development of a Non-invasive Comprehensive Diabetic Complication Diagnosis Model based on Liquid-Biopsy using Explainable Artificial Intelligence (XAI).'</p>
+                <p class="text-sm text-gray-500">2024</p>
+                <p class="mt-1"><b>2024 1st Semester Creative Individual Research:</b> Studied the 'Correlation between the transformation and prediction of gene expression data using a Generative Adversarial Network and the improvement of epigenetic aging profiling performance.'</p>
+                <p class="text-sm text-gray-500">2022 ~ 2024</p>
+                <p class="mt-1"><b>RnE Research:</b> Conducted research on 'Chemotaxis of the Pseudomonas fluorescens-powered biological microrobot towards cancer cells' and 'The correlation between biofilm formation and R.palustris battery efficiency according to the 3D electrode pre-processing method.'</p>
+                <p class="text-sm text-gray-500">2024</p>
+                <p class="mt-1"><b>KAIST Collaborative Research:</b> Participated in research to 'elucidate cell-specific transcriptome dynamics during human cerebral organoid development.'</p>
+                <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">In-house Seminars and Lectures</h3>
+                <p class="text-sm text-gray-500">2022</p>
+                <p class="mt-1"><b>AD Biology Abstract & System Biology seminar:</b> Presented on 'GNN models based on graph theory and the Alzheimer's disease induction mechanism.'</p>
+                <p class="text-sm text-gray-500">2023</p>
+                <p class="mt-1"><b>CoMBI Computational Science Seminar:</b> Conducted a seminar on the topic 'AI-driven drug discovery "Attention architecture".'</p>
+                <p class="text-sm text-gray-500">2024</p>
+                <p class="mt-1"><b>The Nitroplast Seminar:</b> Covered the topic 'The first organelle capable of nitrogen fixation has been discovered in eukaryotes.'</p>
+                <p class="text-sm text-gray-500">2024</p>
+                <p class="mt-1"><b>CoMBI Bioinformatics Seminar:</b> Gave lectures on the 'basics of bioinformatics and system biology.'</p>
             </div>
         </section>
 
-        <section id="blog" class="hidden content-section max-w-4xl mx-auto">
+        <section id="blog" class="max-w-4xl mx-auto content-section">
             <h2 class="text-3xl sm:text-4xl font-bold mb-6 text-center">Community</h2>
             
-            <div id="new-post-section" class="card bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-8 border dark:border-gray-700 transition-colors duration-300" style="display: none;">
+            <div id="new-post-section" class="card p-6 rounded-3xl shadow-lg mb-8 border" style="display: none;">
                 <h3 class="text-xl sm:text-2xl font-semibold mb-4">Create a new post✍🏻</h3>
                 <form id="new-post-form">
-                    <input type="text" id="new-post-title" placeholder="Please enter a title" class="w-full p-3 mb-4 rounded-xl border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <textarea id="new-post-content" rows="6" placeholder="Share your amazing story!" class="w-full p-4 rounded-xl border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                    <button type="submit" class="btn w-full mt-4 bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors">Posting</button>
+                    <input type="text" id="new-post-title" placeholder="Please enter a title" class="w-full p-3 mb-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <textarea id="new-post-content" rows="6" placeholder="Share your amazing story!" class="w-full p-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <button type="submit" class="btn w-full mt-4 bg-blue-600 text-white p-3 rounded-full">Posting</button>
                 </form>
             </div>
 
-            <div id="login-prompt" class="card text-center bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-lg mb-8 border dark:border-gray-700 transition-colors duration-300" style="display: none;">
+            <div id="login-prompt" class="card text-center p-6 sm:p-8 rounded-3xl shadow-lg mb-8 border" style="display: none;">
                 <h3 class="text-xl sm:text-2xl font-semibold mb-4">Post anything!</h3>
                 <p class="mb-6">Please leave any questions or inquiries and I will respond as soon as I read them!</p>
-                <button onclick="window.showLoginModal()" class="btn bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition-colors">Log in and post</button>
+                <button onclick="window.showLoginModal()" class="btn bg-blue-500 text-white px-6 py-3 rounded-full">Log in and post</button>
             </div>
             
             <div id="blog-posts-container"></div>
@@ -216,11 +229,11 @@
         const newPostForm = document.getElementById('new-post-form');
         const loginStatusDesktop = document.getElementById('login-status-desktop');
         const loginStatusMobile = document.getElementById('login-status-mobile');
-        const darkModeToggles = [document.getElementById('dark-mode-toggle'), document.getElementById('dark-mode-toggle-mobile')];
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const darkModeToggleMobile = document.getElementById('dark-mode-toggle-mobile');
         const modal = document.getElementById('modal');
         const modalTitle = document.getElementById('modal-title');
         const modalContent = document.getElementById('modal-content');
-        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const loginModal = document.getElementById('login-modal');
         const newPostSection = document.getElementById('new-post-section');
@@ -237,32 +250,33 @@
             signInOptions: [ firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID ],
         };
 
-        // --- Authentication ---
         auth.onAuthStateChanged(async (user) => {
-            const loggedIn = user && !user.isAnonymous;
-            const statusMessage = loggedIn ? `${user.displayName || user.email.split('@')[0]}, Welcome!` : 'You\'re not logged-in :(';
-            
-            if (loginStatusDesktop) loginStatusDesktop.textContent = statusMessage;
-            if (loginStatusMobile) loginStatusMobile.textContent = statusMessage;
+            const statusMessage = user && !user.isAnonymous ? `${user.displayName || user.email.split('@')[0]}, Welcome!` : 'You\'re not logged-in :(';
+            if (loginStatusDesktop) loginStatusDesktop.innerHTML = statusMessage;
+            if (loginStatusMobile) loginStatusMobile.innerHTML = statusMessage;
 
-            loginButtons.forEach(btn => btn.style.display = loggedIn ? 'none' : 'inline-block');
-            logoutButtons.forEach(btn => btn.style.display = loggedIn ? 'inline-block' : 'none');
-            newPostSection.style.display = loggedIn ? 'block' : 'none';
-            loginPrompt.style.display = loggedIn ? 'none' : 'block';
-            
-            userId = user ? user.uid : null;
-            
-            if (loggedIn) {
+            if (user && !user.isAnonymous) {
+                userId = user.uid;
+                loginButtons.forEach(btn => btn.style.display = 'none');
+                logoutButtons.forEach(btn => btn.style.display = 'inline-block');
+                newPostSection.style.display = 'block';
+                loginPrompt.style.display = 'none';
+
                 const userSettingsRef = db.doc(`artifacts/${appId}/users/${userId}/settings/theme`);
                 const userSettingsSnap = await userSettingsRef.get();
                 if (userSettingsSnap.exists && userSettingsSnap.data().darkMode) {
                     document.documentElement.classList.add('dark');
                 }
+            } else {
+                userId = user ? user.uid : null;
+                loginButtons.forEach(btn => btn.style.display = 'inline-block');
+                logoutButtons.forEach(btn => btn.style.display = 'none');
+                newPostSection.style.display = 'none';
+                loginPrompt.style.display = 'block';
             }
             setupBlogListener();
         });
 
-        // --- Firestore Listener ---
         function setupBlogListener() {
             if (blogPostsUnsubscribe) blogPostsUnsubscribe();
             blogPostsUnsubscribe = db.collection(`artifacts/${appId}/public/data/blog_posts`)
@@ -278,35 +292,31 @@
                 });
         }
         
-        // --- Render Functions ---
         function renderPost(postId, post) {
             const postElement = document.createElement('div');
-            postElement.className = 'card bg-white dark:bg-gray-800 p-6 mb-4 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300';
-            const isOwner = post.userId === userId;
-            const userLiked = post.likes?.includes(userId);
-
+            postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
             postElement.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h3 class="text-2xl font-semibold mb-2">${post.title || 'no title'}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">작성자: ${post.authorName || 'anonym'}</p>
+                        <p class="text-sm text-gray-500">작성자: ${post.authorName || 'anonym'}</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <span class="text-red-500 font-semibold">${post.likes?.length || 0}</span>
-                        <button onclick="likePost('${postId}')" class="btn p-2 rounded-full text-xl ${userLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors">♥</button>
-                        ${isOwner ? `
+                        <span class="text-red-500">${post.likes ? post.likes.length : 0}</span>
+                        <button onclick="likePost('${postId}')" class="btn bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm hover:bg-red-500 hover:text-white">♡</button>
+                        ${post.userId === userId ? `
                             <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Edit</button>
                             <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm">Delete</button>
                         ` : ''}
                     </div>
                 </div>
                 <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
-                <div class="comments-container border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                <div class="comments-container border-t pt-4 mt-4">
                     <h4 class="font-semibold mb-2">Comment</h4>
                     <div id="comments-list-${postId}" class="space-y-2"></div>
                     <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
-                        <input type="text" name="commentContent" placeholder="Please enter your comment.." class="w-full p-2 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors">Add comment</button>
+                        <input type="text" name="commentContent" placeholder="Please enter your comment.." class="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">Add comment</button>
                     </form>
                 </div>
             `;
@@ -316,41 +326,48 @@
             if (post.comments) {
                 post.comments.forEach(comment => {
                     const commentItem = document.createElement('div');
-                    commentItem.className = 'bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-sm';
+                    commentItem.className = 'comment-box p-2 rounded-lg text-sm';
                     commentItem.innerHTML = `<span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}`;
                     commentsList.appendChild(commentItem);
                 });
             }
         }
         
-        // --- CRUD Functions ---
         newPostForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
-            if (!user || user.isAnonymous) return window.showModal('Error', 'Login required.');
-            
-            const title = document.getElementById('new-post-title').value.trim();
-            const content = document.getElementById('new-post-content').value.trim();
-            if (!title || !content) return window.showModal('importance‼️', 'Please enter both the title and content!');
+            if (!user || user.isAnonymous) {
+                window.showModal('Error', 'Login required');
+                return;
+            }
+            const postTitle = document.getElementById('new-post-title').value;
+            const postContent = document.getElementById('new-post-content').value;
+            if (postTitle.trim() === '' || postContent.trim() === '') {
+                window.showModal('importance‼️', 'Please enter both the title and content!');
+                return;
+            }
+
+            const newPost = {
+                title: postTitle, content: postContent, userId: user.uid,
+                authorName: user.displayName || user.email.split('@')[0],
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                likes: [], comments: []
+            };
 
             try {
-                await db.collection(`artifacts/${appId}/public/data/blog_posts`).add({
-                    title, content, userId: user.uid,
-                    authorName: user.displayName || user.email.split('@')[0],
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    likes: [], comments: []
-                });
-                newPostForm.reset();
-                window.showModal('Notice', 'A new post has been added!');
+                await db.collection(`artifacts/${appId}/public/data/blog_posts`).add(newPost);
+                document.getElementById('new-post-title').value = '';
+                document.getElementById('new-post-content').value = '';
+                window.showModal('notice', 'A new post has been added!');
             } catch (error) {
                 console.error("Error adding post:", error);
-                window.showModal('Error', 'Failed to add post.');
+                window.showModal('Error', 'Failed to add post. Looks like you need some coffee!');
             }
         });
 
         window.likePost = async (postId) => {
             const user = auth.currentUser;
-            if (!user || user.isAnonymous) return window.showModal('Notice', 'Login required.');
+            if (!user || user.isAnonymous) { window.showModal('notice', 'Login required'); return; }
             const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
             const post = blogPostsData[postId];
             let newLikes = post.likes || [];
@@ -362,142 +379,132 @@
             await postRef.update({ likes: newLikes });
         };
 
-        window.addComment = async (postId, content) => {
+        window.addComment = async (postId, commentContent) => {
             const user = auth.currentUser;
-            if (!user || user.isAnonymous) return window.showModal('Notice', 'Login required.');
-            if (!content.trim()) return;
-
+            if (!user || user.isAnonymous) { 
+                window.showModal('notice', 'Login required'); 
+                return; 
+            }
+            if (!commentContent.trim()) return;
+            
             const newComment = {
                 userId: user.uid,
                 authorName: user.displayName || user.email.split('@')[0],
-                content: content.trim(),
-                timestamp: new Date() // Using client-side timestamp for simplicity here
+                content: commentContent,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
-            await db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({
-                comments: firebase.firestore.FieldValue.arrayUnion(newComment)
-            });
+            const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
+            try {
+                await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
+            } catch (error) {
+                console.error("Error adding post:", error);
+                window.showModal('Error', 'Failed to add post. Looks like you need some coffee!');
+            }
         };
 
-        window.deletePost = (postId) => {
-            window.showModal('Confirm', 'Are you sure you want to delete this post?', async () => {
-                try {
-                    await db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).delete();
-                } catch (error) {
-                    window.showModal('Error', 'Failed to delete post.');
-                }
+        window.deletePost = async (postId) => {
+            window.showModal('agree', 'Are you sure you want to delete this post?', () => {
+                db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).delete()
+                    .catch(error => window.showModal('Error', 'Failed to delete post. Looks like you need some coffee!'));
             }, true);
         };
 
         window.editPost = (postId) => {
             const post = blogPostsData[postId];
             const modalHTML = `
-                <input type="text" id="edit-post-title" value="${post.title || ''}" class="w-full p-3 mb-4 rounded-xl border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">${post.content}</textarea>
+                <input type="text" id="edit-post-title" value="${post.title || ''}" class="w-full p-3 mb-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="edit-post-content" rows="6" class="w-full p-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">${post.content}</textarea>
             `;
-            window.showModal('Edit Post', modalHTML, async () => {
-                const newTitle = document.getElementById('edit-post-title').value.trim();
-                const newContent = document.getElementById('edit-post-content').value.trim();
+            window.showModal('Edit post', modalHTML, () => {
+                const newTitle = document.getElementById('edit-post-title').value;
+                const newContent = document.getElementById('edit-post-content').value;
                 if (newTitle && newContent) {
-                    try {
-                        await db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({ title: newTitle, content: newContent });
-                    } catch {
-                        window.showModal('Error', 'Failed to edit post.');
-                    }
+                    db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`).update({ title: newTitle, content: newContent })
+                        .catch(error => window.showModal('Error', 'Failed to edit post. Looks like you need some coffee!'));
                 }
             }, true);
         };
-        
-        // --- Navigation & UI ---
-        let currentSectionId = 'about';
 
+        let currentSectionId = 'about';
+        // 이전 버전의 스크립트 로직 복원
         document.addEventListener('DOMContentLoaded', () => {
-            window.showSection(currentSectionId, true);
+            document.querySelectorAll('main section').forEach(section => {
+                section.style.display = 'none';
+                section.style.opacity = '0';
+                section.classList.add('content-section');
+            });
+            document.getElementById(currentSectionId).style.display = 'block';
+            setTimeout(() => {
+                document.getElementById(currentSectionId).style.opacity = '1';
+            }, 20);
+            document.querySelectorAll(`.nav-btn[data-section="${currentSectionId}"]`).forEach(btn => btn.classList.add('active'));
         });
 
-        window.showSection = (sectionId, isInitial = false) => {
-            if (sectionId === currentSectionId && !isInitial) return;
-            
+        window.showSection = (sectionId) => {
+            if (sectionId === currentSectionId) return;
             const currentSection = document.getElementById(currentSectionId);
             const nextSection = document.getElementById(sectionId);
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll(`.nav-btn[data-section="${sectionId}"]`).forEach(btn => btn.classList.add('active'));
 
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.section === sectionId);
-                // Custom active styles
-                if (btn.dataset.section === sectionId) {
-                    btn.classList.add('bg-blue-500', 'text-white', 'font-semibold');
-                    btn.classList.remove('hover:bg-gray-200', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-200');
-                } else {
-                    btn.classList.remove('bg-blue-500', 'text-white', 'font-semibold');
-                    btn.classList.add('hover:bg-gray-200', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-200');
-                }
-            });
-
-            if (currentSection && !isInitial) {
+            if (currentSection) {
                 currentSection.style.opacity = '0';
                 setTimeout(() => {
-                    currentSection.classList.add('hidden');
+                    currentSection.style.display = 'none';
                     if (nextSection) {
-                        nextSection.classList.remove('hidden');
+                        nextSection.style.display = 'block';
                         setTimeout(() => { nextSection.style.opacity = '1'; }, 20);
                     }
                     currentSectionId = sectionId;
                 }, 300);
-            } else if (nextSection) {
-                nextSection.classList.remove('hidden');
-                nextSection.style.opacity = '1';
-                currentSectionId = sectionId;
             }
-            
             mobileMenu.classList.add('hidden');
             hamburgerBtn.setAttribute('aria-expanded', 'false');
         };
-
-        window.showModal = (title, content, onConfirm = null, showConfirm = false) => {
+        
+        window.showModal = function(title, content, onConfirm, showConfirmCancel) {
             modalTitle.textContent = title;
             modalContent.innerHTML = content;
-            modalConfirmBtn.classList.toggle('hidden', !showConfirm);
+            const oldButtons = modal.querySelectorAll('.modal-action-btn');
+            oldButtons.forEach(btn => btn.remove());
             
-            if (onConfirm) {
-                // Clone and replace to remove old event listeners
-                const newConfirmBtn = modalConfirmBtn.cloneNode(true);
-                modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
-                document.getElementById('modal-confirm-btn').onclick = () => {
-                    onConfirm();
-                    window.hideModal();
-                };
+            if (showConfirmCancel && onConfirm) {
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'modal-action-btn btn bg-blue-500 text-white px-4 py-2 rounded-full mr-2';
+                confirmBtn.textContent = 'Save';
+                confirmBtn.onclick = () => { onConfirm(); window.hideModal(); };
+                modalCloseBtn.parentNode.insertBefore(confirmBtn, modalCloseBtn);
             }
-            
             modal.classList.remove('opacity-0', 'pointer-events-none');
-        };
-        window.hideModal = () => modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        window.hideModal = function() { modal.classList.add('opacity-0', 'pointer-events-none'); }
         modalCloseBtn.addEventListener('click', window.hideModal);
 
-        window.showLoginModal = () => {
-            loginModal.classList.remove('opacity-0', 'pointer-events-none');
-            ui.start('#firebaseui-auth-container', uiConfig);
-        };
-        window.hideLoginModal = () => loginModal.classList.add('opacity-0', 'pointer-events-none');
-        document.getElementById('login-modal-close-btn').addEventListener('click', window.hideLoginModal);
-
+        window.showLoginModal = function() { loginModal.classList.remove('opacity-0', 'pointer-events-none'); ui.start('#firebaseui-auth-container', uiConfig); }
+        window.hideLoginModal = function() { loginModal.classList.add('opacity-0', 'pointer-events-none'); }
+        
         hamburgerBtn.addEventListener('click', () => {
             const isHidden = mobileMenu.classList.toggle('hidden');
             hamburgerBtn.setAttribute('aria-expanded', String(!isHidden));
         });
         loginButtons.forEach(btn => btn.addEventListener('click', window.showLoginModal));
         logoutButtons.forEach(btn => btn.addEventListener('click', () => auth.signOut()));
+        document.getElementById('login-modal-close-btn').addEventListener('click', window.hideLoginModal);
         
         const toggleDarkMode = async () => {
-            const isDark = document.documentElement.classList.toggle('dark');
+            const isDarkMode = document.documentElement.classList.toggle('dark');
             const user = auth.currentUser;
             if (user && !user.isAnonymous) {
                 try {
-                    await db.doc(`artifacts/${appId}/users/${user.uid}/settings/theme`).set({ darkMode: isDark });
+                    await db.doc(`artifacts/${appId}/users/${user.uid}/settings/theme`).set({ darkMode: isDarkMode });
                 } catch (error) {
                     console.error("Failed to save dark mode settings:", error);
                 }
             }
         };
-        darkModeToggles.forEach(toggle => toggle.addEventListener('click', toggleDarkMode));
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        darkModeToggleMobile.addEventListener('click', toggleDarkMode);
 
     </script>
 </body>
