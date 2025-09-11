@@ -293,52 +293,68 @@
         }
         
     function renderPost(postId, post) {
-    const postElement = document.createElement('div');
-    postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
+            const postElement = document.createElement('div');
+            postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
 
-    const userLiked = post.likes && post.likes.includes(userId);
+            const userLiked = post.likes && post.likes.includes(userId);
 
-    postElement.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <h3 class="text-2xl font-semibold mb-2">${post.title || 'no title'}</h3>
-                <p class="text-sm text-gray-500">작성자: ${post.authorName || 'anonym'}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-                <span class="text-red-500 font-semibold">${post.likes ? post.likes.length : 0}</span>
-                
-                <button onclick="likePost('${postId}')" class="btn px-3 py-1 rounded-full text-sm ${userLiked ? 'text-red-500 bg-gray-200 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors">
-                    ${userLiked ? '♥' : '♡'}
-                </button>
+            postElement.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">${post.title || 'no title'}</h3>
+                        <p class="text-sm text-gray-500">작성자: ${post.authorName || 'anonym'}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-red-500 font-semibold">${post.likes ? post.likes.length : 0}</span>
+                        
+                        <button onclick="likePost('${postId}')" class="btn px-3 py-1 rounded-full text-sm ${userLiked ? 'text-red-500 bg-gray-200 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors">
+                            ${userLiked ? '♥' : '♡'}
+                        </button>
 
-                ${post.userId === userId ? `
-                    <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Edit</button>
-                    <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm">Delete</button>
-                ` : ''}
-            </div>
-        </div>
-        <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
-        <div class="comments-container border-t pt-4 mt-4">
-            <h4 class="font-semibold mb-2">Comment</h4>
-            <div id="comments-list-${postId}" class="space-y-2"></div>
-            <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
-                <input type="text" name="commentContent" placeholder="Please enter your comment.." class="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">Add comment</button>
-            </form>
-        </div>
-    `;
-    blogPostsContainer.appendChild(postElement);
+                        ${post.userId === userId ? `
+                            <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Edit</button>
+                            <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm">Delete</button>
+                        ` : ''}
+                    </div>
+                </div>
+                <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
+                <div class="comments-container border-t pt-4 mt-4">
+                    <h4 class="font-semibold mb-2">Comment</h4>
+                    <div id="comments-list-${postId}" class="space-y-2"></div>
+                    <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
+                        <input type="text" name="commentContent" placeholder="Please enter your comment.." class="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">Add comment</button>
+                    </form>
+                </div>
+            `;
+            blogPostsContainer.appendChild(postElement);
 
-    const commentsList = document.getElementById(`comments-list-${postId}`);
-    if (post.comments) {
-        post.comments.forEach(comment => {
-            const commentItem = document.createElement('div');
-            commentItem.className = 'comment-box p-2 rounded-lg text-sm';
-            commentItem.innerHTML = `<span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}`;
-            commentsList.appendChild(commentItem);
-        });
-    }
-}
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            if (post.comments) {
+                // ✨ forEach 루프에 index를 추가하여 각 댓글의 순번을 가져옵니다.
+                post.comments.forEach((comment, index) => {
+                    const commentItem = document.createElement('div');
+                    // ✨ 댓글과 삭제 버튼을 한 줄에 놓기 위해 flexbox를 사용합니다.
+                    commentItem.className = 'comment-box p-2 rounded-lg text-sm flex justify-between items-center';
+                    
+                    let commentHTML = `
+                        <div>
+                            <span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}
+                        </div>
+                    `;
+
+                    // ✨ 댓글 작성자 ID와 현재 사용자 ID가 같을 경우에만 삭제 버튼을 추가합니다.
+                    if (comment.userId === userId) {
+                        commentHTML += `
+                            <button onclick="deleteComment('${postId}', ${index})" class="text-red-500 hover:text-red-700 text-xs ml-2">Delete</button>
+                        `;
+                    }
+
+                    commentItem.innerHTML = commentHTML;
+                    commentsList.appendChild(commentItem);
+                });
+            }
+        }
         
         newPostForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -434,6 +450,92 @@
                 }
             }, true);
         };
+
+        window.deleteComment = async (postId, commentIndex) => {
+            // 사용자에게 정말 삭제할 것인지 다시 한번 확인합니다.
+            window.showModal('Confirm', 'Are you sure you want to delete this comment?', async () => {
+                const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
+                const post = blogPostsData[postId];
+
+                if (!post || !post.comments) {
+                    window.showModal('Error', 'Could not find the comment to delete.');
+                    return;
+                }
+
+                // 전체 댓글 배열에서 선택된 인덱스의 댓글만 제외하고 새 배열을 만듭니다.
+                const newComments = post.comments.filter((_, index) => index !== commentIndex);
+
+                try {
+                    // 데이터베이스의 'comments' 필드를 새로운 배열로 업데이트합니다.
+                    await postRef.update({ comments: newComments });
+                } catch (error) {
+                    console.error("Error deleting comment:", error);
+                    window.showModal('Error', 'Failed to delete comment.');
+                }
+            }, true);
+        };function renderPost(postId, post) {
+            const postElement = document.createElement('div');
+            postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
+
+            const userLiked = post.likes && post.likes.includes(userId);
+
+            postElement.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">${post.title || 'no title'}</h3>
+                        <p class="text-sm text-gray-500">작성자: ${post.authorName || 'anonym'}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-red-500 font-semibold">${post.likes ? post.likes.length : 0}</span>
+                        
+                        <button onclick="likePost('${postId}')" class="btn px-3 py-1 rounded-full text-sm ${userLiked ? 'text-red-500 bg-gray-200 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors">
+                            ${userLiked ? '♥' : '♡'}
+                        </button>
+
+                        ${post.userId === userId ? `
+                            <button onclick="editPost('${postId}')" class="btn bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Edit</button>
+                            <button onclick="deletePost('${postId}')" class="btn bg-red-500 text-white px-3 py-1 rounded-full text-sm">Delete</button>
+                        ` : ''}
+                    </div>
+                </div>
+                <p class="mb-4 whitespace-pre-wrap">${post.content}</p>
+                <div class="comments-container border-t pt-4 mt-4">
+                    <h4 class="font-semibold mb-2">Comment</h4>
+                    <div id="comments-list-${postId}" class="space-y-2"></div>
+                    <form onsubmit="event.preventDefault(); addComment('${postId}', this.commentContent.value); this.reset();" class="mt-4">
+                        <input type="text" name="commentContent" placeholder="Please enter your comment.." class="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="btn w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">Add comment</button>
+                    </form>
+                </div>
+            `;
+            blogPostsContainer.appendChild(postElement);
+
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            if (post.comments) {
+                // ✨ forEach 루프에 index를 추가하여 각 댓글의 순번을 가져옵니다.
+                post.comments.forEach((comment, index) => {
+                    const commentItem = document.createElement('div');
+                    // ✨ 댓글과 삭제 버튼을 한 줄에 놓기 위해 flexbox를 사용합니다.
+                    commentItem.className = 'comment-box p-2 rounded-lg text-sm flex justify-between items-center';
+                    
+                    let commentHTML = `
+                        <div>
+                            <span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}
+                        </div>
+                    `;
+
+                    // ✨ 댓글 작성자 ID와 현재 사용자 ID가 같을 경우에만 삭제 버튼을 추가합니다.
+                    if (comment.userId === userId) {
+                        commentHTML += `
+                            <button onclick="deleteComment('${postId}', ${index})" class="text-red-500 hover:text-red-700 text-xs ml-2">Delete</button>
+                        `;
+                    }
+
+                    commentItem.innerHTML = commentHTML;
+                    commentsList.appendChild(commentItem);
+                });
+            }
+        }
 
         let currentSectionId = 'about';
         // 이전 버전의 스크립트 로직 복원
