@@ -387,27 +387,30 @@
         };
 
         window.addComment = async (postId, commentContent) => {
-            const user = auth.currentUser;
-            if (!user || user.isAnonymous) { 
-                window.showModal('notice', 'Login required'); 
-                return; 
-            }
-            if (!commentContent.trim()) return;
-            
-            const newComment = {
-                userId: user.uid,
-                authorName: user.displayName || user.email.split('@')[0],
-                content: commentContent,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
-            try {
-                await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
-            } catch (error) {
-                console.error("Error adding post:", error);
-                window.showModal('Error', 'Failed to add post. Looks like you need some coffee!');
-            }
-        };
+            const user = auth.currentUser;
+            if (!user || user.isAnonymous) { 
+                window.showModal('notice', 'Login required'); 
+                return; 
+            }
+            if (!commentContent.trim()) return;
+            
+            const newComment = {
+                userId: user.uid,
+                authorName: user.displayName || user.email.split('@')[0],
+                content: commentContent,
+                // --- 수정된 부분 ---
+                // 서버 시간 대신 클라이언트 시간을 사용하도록 변경하여 안정성 확보
+                timestamp: new Date()
+            };
+            const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
+            try {
+                await postRef.update({ comments: firebase.firestore.FieldValue.arrayUnion(newComment) });
+            } catch (error) {
+                // --- 오류 메시지도 명확하게 수정 ---
+                console.error("Error adding comment:", error);
+                window.showModal('Error', 'Failed to add comment. Please try again.');
+            }
+        };
 
         window.deletePost = async (postId) => {
             window.showModal('agree', 'Are you sure you want to delete this post?', () => {
