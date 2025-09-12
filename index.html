@@ -95,16 +95,18 @@
 
         .fish {
             position: absolute;
-            animation-name: swim;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
         
-        @keyframes swim {
-            0% { transform: translateX(-10vw) translateY(0vh) scaleX(1); }
-            49% { transform: translateX(50vw) translateY(-2vh) scaleX(1); }
-            50% { transform: translateX(50vw) translateY(-2vh) scaleX(-1); }
-            100% { transform: translateX(-10vw) translateY(0vh) scaleX(-1); }
+        @keyframes swim-ltr {
+            0% { transform: translateX(-10vw) scaleX(1); }
+            100% { transform: translateX(110vw) scaleX(1); }
+        }
+        
+        @keyframes swim-rtl {
+            0% { transform: translateX(110vw) scaleX(-1); }
+            100% { transform: translateX(-10vw) scaleX(-1); }
         }
 
         header, main {
@@ -278,7 +280,7 @@
                 </ul>
                 <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Contact</h3>
                  <div class="flex items-center space-x-4">
-                    <a href="https://www.linkedin.com/in/%EB%8F%9B%ED%98%81-%EC%9D%B4-140a622b0/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
+                    <a href="https://www.linkedin.com/in/%EB%8F%99%ED%98%81-%EC%9D%B4-140a622b0/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
                         <img src="linkedin_logo.png" alt="linkedin" class="h-12 sm:h-12 w-auto">
                     <a href="https://www.instagram.com/dhleethan/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
                         <img src="instagram_logo.png" alt="instagram" class="h-12 sm:h-12 w-auto">
@@ -463,7 +465,7 @@
         }
         
         function createBubbles() {
-            const bubbleCount = 50; 
+            const bubbleCount = 50;
             for (let i = 0; i < bubbleCount; i++) {
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
@@ -480,8 +482,8 @@
         function createFish() {
             const fishContainer = document.getElementById('fish-container');
             if (!fishContainer) return;
-            const fishEmojis = ['🐠', '🐟', '🐡'];
-            const fishCount = 15;
+            const fishEmojis = ['🐠', '🐟', '🐡', '🦑', '🦐'];
+            const fishCount = 10;
 
             for (let i = 0; i < fishCount; i++) {
                 const fish = document.createElement('div');
@@ -489,14 +491,16 @@
                 fish.innerHTML = fishEmojis[Math.floor(Math.random() * fishEmojis.length)];
                 
                 fish.style.top = Math.random() * 85 + 5 + '%'; 
-                fish.style.fontSize = Math.random() * 24 + 12 + 'px';
+                fish.style.fontSize = Math.random() * 60 + 10 + 'px';
                 
-                const duration = Math.random() * 15 + 10;
+                const duration = Math.random() * 12 + 8;
                 fish.style.animationDuration = duration + 's';
                 fish.style.animationDelay = '-' + (Math.random() * duration) + 's';
-                
+
                 if (Math.random() < 0.5) {
-                    fish.style.animationDirection = 'reverse';
+                    fish.style.animationName = 'swim-ltr';
+                } else {
+                    fish.style.animationName = 'swim-rtl';
                 }
                 
                 fishContainer.appendChild(fish);
