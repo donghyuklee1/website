@@ -277,7 +277,7 @@
 
         // --- DOM Elements ---
         const communityPostsContainer = document.getElementById('community-posts-container');
-        const newCommunityPostForm = document.getElementById('new-community-post-form'); // Corrected ID
+        const newCommunityPostForm = document.getElementById('new-community-post-form'); // ✨ BUG FIX: Corrected ID
         const loginStatusDesktop = document.getElementById('login-status-desktop');
         const loginStatusMobile = document.getElementById('login-status-mobile');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -484,7 +484,7 @@
                 userId: user.uid,
                 authorName: user.displayName || user.email.split('@')[0],
                 content: commentContent,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: firebase.firestore.Timestamp.now() // ✨ BUG FIX: Use Firestore Timestamp
             };
             const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
             try {
