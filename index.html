@@ -483,7 +483,7 @@
             const fishContainer = document.getElementById('fish-container');
             if (!fishContainer) return;
             const fishEmojis = ['🐠', '🐟', '🐡'];
-            const fishCount = 15;
+            const fishCount = 10;
 
             for (let i = 0; i < fishCount; i++) {
                 const fish = document.createElement('div');
@@ -491,7 +491,7 @@
                 fish.innerHTML = fishEmojis[Math.floor(Math.random() * fishEmojis.length)];
                 
                 fish.style.top = Math.random() * 85 + 5 + '%'; 
-                fish.style.fontSize = Math.random() * 35 + 15 + 'px';
+                fish.style.fontSize = Math.random() * 40 + 25 + 'px';
                 
                 const duration = Math.random() * 12 + 8;
                 fish.style.animationDuration = duration + 's';
