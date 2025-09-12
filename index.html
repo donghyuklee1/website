@@ -105,7 +105,6 @@
         <div class="container mx-auto px-4 py-2 flex justify-between items-center relative">
             <a href="#" onclick="event.preventDefault(); window.showSection('about')" class="cursor-pointer">
                 <img src="image-removebg-preview.png" alt="welcome logo" class="h-12 sm:h-16 w-auto"> 
-                <img src="kaist_logo.png" alt="kaist" class="h-12 sm:h-16 w-auto">
             </a>
             
             <div class="hidden md:flex flex-col items-end">
@@ -292,7 +291,7 @@
 
         // --- DOM Elements ---
         const communityPostsContainer = document.getElementById('community-posts-container');
-        const newCommunityPostForm = document.getElementById('new-community-post-form'); // ✨ BUG FIX: Corrected ID
+        const newCommunityPostForm = document.getElementById('new-community-post-form');
         const loginStatusDesktop = document.getElementById('login-status-desktop');
         const loginStatusMobile = document.getElementById('login-status-mobile');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -398,20 +397,19 @@
         function renderCommunityPost(postId, post) {
              const postElement = document.createElement('div');
              postElement.className = 'card p-6 mb-4 rounded-xl shadow-lg border';
-
              const userLiked = post.likes && post.likes.includes(userId);
 
              postElement.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
                     <div>
                         <h3 class="text-2xl font-semibold mb-2">${post.title || 'no title'}</h3>
-                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 whitespace-nowrap">
                            <p>Posted by: ${post.authorName || 'anonym'}</p>
                            <span>•</span>
                            <p>${formatTimestamp(post.timestamp)}</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 self-end sm:self-start flex-shrink-0">
                         <span class="text-red-500">${post.likes ? post.likes.length : 0}</span>
                         <button onclick="likePost('${postId}')" class="btn px-3 py-1 rounded-full text-sm ${userLiked ? 'text-red-500 bg-gray-200 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors">
                             ${userLiked ? '♥' : '♡'}
@@ -436,16 +434,16 @@
 
             const commentsList = document.getElementById(`comments-list-${postId}`);
             if (post.comments) {
-                [...post.comments].sort((a,b) => a.timestamp.toMillis() - b.timestamp.toMillis()).forEach((comment, index) => {
+                [...post.comments].sort((a,b) => (a.timestamp?.toMillis() || 0) - (b.timestamp?.toMillis() || 0)).forEach((comment, index) => {
                     const commentItem = document.createElement('div');
-                    commentItem.className = 'comment-box p-2 rounded-lg text-sm flex justify-between items-center';
+                    commentItem.className = 'comment-box p-2 rounded-lg text-sm flex justify-between items-start gap-4';
                     
                     commentItem.innerHTML = `
-                        <div class="flex-grow">
-                            <span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}
+                        <div class="flex-grow min-w-0">
+                            <p><span class="font-semibold">${comment.authorName || 'anonym'}:</span> ${comment.content}</p>
                         </div>
-                        <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                            <span class="text-xs text-gray-400">${formatTimestamp(comment.timestamp)}</span>
+                        <div class="flex items-center space-x-2 flex-shrink-0">
+                            <span class="text-xs text-gray-400 whitespace-nowrap">${formatTimestamp(comment.timestamp)}</span>
                             ${comment.userId === userId ? `<button onclick="deleteComment('${postId}', ${index})" class="text-red-500 hover:text-red-700 text-xs">Delete</button>` : ''}
                         </div>
                     `;
@@ -503,7 +501,7 @@
                 userId: user.uid,
                 authorName: user.displayName || user.email.split('@')[0],
                 content: commentContent,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp() // ✨ BUG FIX: Use Firestore Timestamp
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
             const postRef = db.doc(`artifacts/${appId}/public/data/blog_posts/${postId}`);
             try {
@@ -825,3 +823,4 @@
     </script>
 </body>
 </html>
+
