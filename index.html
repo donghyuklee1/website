@@ -52,11 +52,11 @@
             animation: wave-animation 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
             opacity: 1;
         }
-        
+       
         .dark .wave {
             filter: brightness(0.2);
         }
-        
+       
         @keyframes wave-animation {
             0% { margin-left: 0; }
             100% { margin-left: -1600px; }
@@ -65,7 +65,7 @@
             0%, 100% { transform: translate3d(0, -25px, 0); }
             50% { transform: translate3d(0, 5px, 0); }
         }
-        
+       
         #bubbles, #fish-container {
             position: fixed;
             bottom: 0;
@@ -83,7 +83,7 @@
             border-radius: 50%;
             animation: rise linear infinite;
         }
-        
+       
         .dark .bubble {
              background-color: rgba(255, 255, 255, 0.05);
         }
@@ -98,12 +98,12 @@
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
-        
+       
         @keyframes swim-ltr {
             0% { transform: translateX(-10vw) scaleX(-1); } /* 왼쪽에서 출발, 오른쪽 보기 */
             100% { transform: translateX(110vw) scaleX(-1); } /* 오른쪽으로 도착, 오른쪽 보기 */
         }
-        
+       
         @keyframes swim-rtl {
             0% { transform: translateX(110vw) scaleX(1); } /* 오른쪽에서 출발, 왼쪽 보기 */
             100% { transform: translateX(-10vw) scaleX(1); } /* 왼쪽으로 도착, 왼쪽 보기 */
@@ -113,9 +113,13 @@
             position: relative;
             z-index: 10;
         }
-        
+       
         body { background-color: transparent; }
-        .dark body { background-color: transparent; }
+        .dark body { 
+             background-color: transparent; 
+             /* UPDATED: Added white text color for dark mode */
+             color: #ffffff;
+        }
 
         .card { background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
         .dark .card { background-color: rgba(45, 55, 72, 0.7); border-color: #4a5568; }
@@ -123,7 +127,7 @@
         .dark input, .dark textarea { background-color: #4a5568; border-color: #4a5568; color: #e2e8f0; }
         .dark .comment-box { background-color: #4a5568; }
         .modal { transition: opacity 0.3s ease-in-out; }
-        
+       
         .nav-btn {
             color: #374151;
             transition: all 0.3s ease-in-out;
@@ -134,7 +138,7 @@
 
         .nav-btn:not(.active):hover { background-color: #e5e7eb; transform: translateY(-2px); }
         .dark .nav-btn:not(.active):hover { background-color: #374151; }
-        
+       
         .nav-btn.active {
             font-weight: 600;
             background-color: #3b82f6;
@@ -147,8 +151,9 @@
         }
         .prose { max-width: none; }
 
+        /* UPDATED: Dark mode text color */
         .dark .prose-invert * {
-            color: #e2e8f0;
+            color: #ffffff;
         }
         .dark .prose-invert a {
             color: #60a5fa;
@@ -156,6 +161,72 @@
         .dark .prose-invert a:hover {
             color: #93c5fd;
         }
+
+        /* START: ADDED CSS for new Dark Mode Toggle */
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            width: 60px;
+            position: relative;
+            background-color: #f1f1f1;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: 1px solid #ccc;
+        }
+        .dark .theme-switch {
+            background-color: #4a5568;
+            border-color: #374151;
+        }
+
+        .theme-switch__knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            height: 28px;
+            width: 28px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .dark .theme-switch__knob {
+            transform: translateX(26px);
+        }
+
+        .theme-switch__icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #6b7280;
+            transition: opacity 0.2s;
+        }
+        .dark .theme-switch__icon {
+             fill: #e5e7eb;
+        }
+
+        .theme-switch__icon--sun {
+            opacity: 1;
+        }
+        .dark .theme-switch__icon--sun {
+            opacity: 0;
+        }
+
+        .theme-switch__icon--moon {
+            opacity: 0;
+            right: 6px;
+        }
+        .dark .theme-switch__icon--moon {
+            opacity: 1;
+        }
+        /* END: ADDED CSS for new Dark Mode Toggle */
+
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -209,8 +280,7 @@
     <div id="blog-article-modal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div id="blog-article-modal-content" class="text-left">
-                <!-- Full blog article content will be injected here -->
-            </div>
+                </div>
             <button id="blog-article-modal-close-btn" class="w-full mt-4 btn bg-gray-300 px-4 py-2 rounded-full">Close</button>
         </div>
     </div>
@@ -230,7 +300,17 @@
                     <button onclick="window.showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">CV</button>
                     <button onclick="window.showSection('blog')" class="nav-btn btn px-4 py-2 rounded-full" data-section="blog">Blog</button>
                     <button onclick="window.showSection('community')" class="nav-btn btn px-4 py-2 rounded-full" data-section="community">Com.</button>
-                    <button id="dark-mode-toggle" class="btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">⚡️</button>
+                    
+                    <div id="dark-mode-toggle" class="theme-switch" aria-label="Toggle dark mode">
+                        <div class="theme-switch__icon theme-switch__icon--moon">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.29,15.29A10,10,0,1,1,8.71,6.71,8,8,0,0,0,17.29,15.29Z"/></svg>
+                        </div>
+                        <div class="theme-switch__knob">
+                            <div class="theme-switch__icon theme-switch__icon--sun">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM12,20a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/><rect width="2" height="4" x="11" y="1"/><rect width="4" height="2" x="19" y="11"/><rect width="2" height="4" x="11" y="19"/><rect width="4" height="2" x="1" y="11"/><rect width="2.83" height="2.83" x="4.54" y="4.54" transform="rotate(-45 5.95 5.95)"/><rect width="2.83" height="2.83" x="16.63" y="16.63" transform="rotate(-45 18.044 18.044)"/><rect width="2.83" height="2.83" x="4.54" y="16.63" transform="rotate(-135 5.95 18.04)"/><rect width="2.83" height="2.83" x="16.63" y="4.54" transform="rotate(134.999 18.04 5.95)"/></svg>
+                            </div>
+                        </div>
+                    </div>
                     <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">Login</button>
                     <button id="logout-btn" class="btn bg-red-500 text-white px-4 py-2 rounded-full" style="display: none;">Logout</button>
                 </nav>
@@ -251,7 +331,17 @@
                     <button onclick="window.showSection('research')" class="nav-btn btn w-full py-2 rounded-full" data-section="research">CV</button>
                     <button onclick="window.showSection('blog')" class="nav-btn btn w-full py-2 rounded-full" data-section="blog">Blog</button>
                     <button onclick="window.showSection('community')" class="nav-btn btn w-full py-2 rounded-full" data-section="community">Com.</button>
-                    <button id="dark-mode-toggle-mobile" class="btn w-full py-2 rounded-full bg-gray-200 dark:bg-gray-700" aria-label="Toggle dark mode">⚡️</button>
+                    
+                    <div id="dark-mode-toggle-mobile" class="theme-switch" aria-label="Toggle dark mode">
+                        <div class="theme-switch__icon theme-switch__icon--moon">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.29,15.29A10,10,0,1,1,8.71,6.71,8,8,0,0,0,17.29,15.29Z"/></svg>
+                        </div>
+                        <div class="theme-switch__knob">
+                            <div class="theme-switch__icon theme-switch__icon--sun">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM12,20a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/><rect width="2" height="4" x="11" y="1"/><rect width="4" height="2" x="19" y="11"/><rect width="2" height="4" x="11" y="19"/><rect width="4" height="2" x="1" y="11"/><rect width="2.83" height="2.83" x="4.54" y="4.54" transform="rotate(-45 5.95 5.95)"/><rect width="2.83" height="2.83" x="16.63" y="16.63" transform="rotate(-45 18.044 18.044)"/><rect width="2.83" height="2.83" x="4.54" y="16.63" transform="rotate(-135 5.95 18.04)"/><rect width="2.83" height="2.83" x="16.63" y="4.54" transform="rotate(134.999 18.04 5.95)"/></svg>
+                            </div>
+                        </div>
+                    </div>
                     <button id="login-btn-mobile" class="btn w-full py-2 bg-blue-500 text-white rounded-full" style="display: none;">Login</button>
                     <button id="logout-btn-mobile" class="btn w-full py-2 bg-red-500 text-white rounded-full" style="display: none;">Logout</button>
                 </nav>
@@ -344,12 +434,10 @@
             <div class="mb-6 flex flex-col sm:flex-row gap-4">
                 <input type="search" id="blog-search-input" placeholder="Search posts..." class="w-full sm:w-1/3 p-2 rounded-full border bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <div id="categories-container" class="flex flex-wrap gap-2 items-center">
-                    <!-- Category buttons will be inserted here by JavaScript -->
-                </div>
+                    </div>
             </div>
             <div id="blog-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Blog articles will be inserted here by JavaScript -->
-            </div>
+                </div>
         </section>
 
         <section id="community" class="hidden max-w-4xl mx-auto content-section">
@@ -986,4 +1074,3 @@
     </script>
 </body>
 </html>
-
