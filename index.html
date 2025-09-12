@@ -100,13 +100,13 @@
         }
         
         @keyframes swim-ltr {
-            0% { transform: translateX(-10vw) scaleX(1); }
-            100% { transform: translateX(110vw) scaleX(1); }
+            0% { transform: translateX(-10vw) scaleX(-1); } /* 왼쪽에서 출발, 오른쪽 보기 */
+            100% { transform: translateX(110vw) scaleX(-1); } /* 오른쪽으로 도착, 오른쪽 보기 */
         }
         
         @keyframes swim-rtl {
-            0% { transform: translateX(110vw) scaleX(-1); }
-            100% { transform: translateX(-10vw) scaleX(-1); }
+            0% { transform: translateX(110vw) scaleX(1); } /* 오른쪽에서 출발, 왼쪽 보기 */
+            100% { transform: translateX(-10vw) scaleX(1); } /* 왼쪽으로 도착, 왼쪽 보기 */
         }
 
         header, main {
