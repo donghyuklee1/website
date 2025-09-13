@@ -229,6 +229,22 @@
             opacity: 1;
         }
 
+        #typed-text::after {
+        content: '|';
+        display: inline-block;
+        margin-left: 0.2rem;
+        animation: blink 0.7s infinite;
+        color: #3b82f6; /* 커서 색상 */
+        }
+
+        .dark #typed-text::after {
+            color: #60a5fa; /* 다크모드 커서 색상 */
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -358,7 +374,9 @@
 
     <main class="container mx-auto p-4 sm:p-8">
         <section id="about" class="hidden max-w-4xl mx-auto card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 content-section">
-            <img src="welcome sign.png" alt="welcome!" class="block mx-auto">
+            <p class="text-xl sm:text-2xl font-semibold mb-4">
+                Welcome! <span id="typed-text"></span>
+            </p>
             <img src="IMG_7860.jpeg" alt="프로필 사진" class="rounded-full w-40 h-40 sm:w-60 sm:h-60 mx-auto mb-6 shadow-md object-cover">
             <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed">
                 <h3 class="text-xl sm:text-2xl font-semibold mt-8 mb-4">Hello! 🙌🏻</h3>
@@ -540,7 +558,38 @@
             signInFlow: 'popup',
             signInOptions: [ firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID ],
         };
-        
+
+        const typedTextElement = document.getElementById('typed-text');
+        const textArray = ["a Student at KAIST.", "a Bioengineer.", "an AI Researcher."]; // 원하는 문구로 수정하세요.
+        const typingDelay = 100;
+        const erasingDelay = 50;
+        const newTextDelay = 2000; // 다음 문장이 나오기 전 대기 시간
+        let textArrayIndex = 0;
+        let charIndex = 0;
+
+        function type() {
+            if (charIndex < textArray[textArrayIndex].length) {
+                typedTextElement.textContent += textArray[textArrayIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(type, typingDelay);
+            } else {
+            // 문장이 모두 타이핑되면 잠시 대기 후 지우기 시작
+                setTimeout(erase, newTextDelay);
+            }
+        }
+
+        function erase() {
+            if (charIndex > 0) {
+                typedTextElement.textContent = textArray[textArrayIndex].substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(erase, erasingDelay);
+            } else {
+                // 문장이 모두 지워지면 다음 문장으로 이동
+                textArrayIndex++;
+                if (textArrayIndex >= textArray.length) textArrayIndex = 0;
+                setTimeout(type, typingDelay + 1100);
+            }
+        }
         // --- Helper Functions ---
         function formatTimestamp(timestamp) {
             if (!timestamp || !timestamp.toDate) return '';
@@ -634,21 +683,32 @@
             setupBlogArticleListener();
         });
 
-        // --- Community Logic ---
-        function setupCommunityListener() {
-            if (communityPostsUnsubscribe) communityPostsUnsubscribe();
-            communityPostsUnsubscribe = db.collection(`artifacts/${appId}/public/data/blog_posts`)
-                .orderBy("timestamp", "desc")
-                .onSnapshot((snapshot) => {
-                    communityPostsContainer.innerHTML = '';
-                    snapshot.forEach((doc) => {
-                        const post = doc.data();
-                        const postId = doc.id;
-                        communityPostsData[postId] = post;
-                        renderCommunityPost(postId, post);
+        let currentSectionId = 'about';
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            createBubbles();
+            createFish();
+        
+            // ▼▼▼ 타이핑 애니메이션 시작 함수 호출 추가 ▼▼▼
+            if (typedTextElement) {
+                type();
+            }
+
+            // --- Community Logic ---
+            function setupCommunityListener() {
+                if (communityPostsUnsubscribe) communityPostsUnsubscribe();
+                communityPostsUnsubscribe = db.collection(`artifacts/${appId}/public/data/blog_posts`)
+                    .orderBy("timestamp", "desc")
+                    .onSnapshot((snapshot) => {
+                        communityPostsContainer.innerHTML = '';
+                        snapshot.forEach((doc) => {
+                            const post = doc.data();
+                            const postId = doc.id;
+                            communityPostsData[postId] = post;
+                            renderCommunityPost(postId, post);
+                        });
                     });
-                });
-        }
+            }
         
         function renderCommunityPost(postId, post) {
              const postElement = document.createElement('div');
