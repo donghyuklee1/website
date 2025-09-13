@@ -271,40 +271,94 @@
         }
 
         /* START: UPDATED SKILL BADGE COLORS */
-        .skill-badge {
-            color: white;
-            border: 1px solid transparent; 
-        }
+.skill-badge {
+    color: white;
+    border: 1px solid transparent; 
+}
 
-        .skill-python {
-            background-image: linear-gradient(135deg, #5A8BAA 40%, #F0D878 60%);
-            color: #000;
-        }
-        .skill-javascript {
-            background-color: #F0E68C;
-            color: #333;
-        }
-        .skill-react {
-            background-color: #88CEDE;
-            color: #000000;
-        }
-        .skill-html5 {
-            background-color: #E57373;
-        }
-        .skill-css3 {
-            background-color: #6495ED;
-        }
-        .skill-tailwindcss {
-            background-color: #4DB6AC;
-        }
-        .skill-firebase {
-            background-image: linear-gradient(135deg, #FFCC80 49%, #FFA726 51%);
-            color: #000;
-        }
-        .skill-bioinformatics {
-            background-image: linear-gradient(135deg, #81C784 49%, #90A4AE 51%);
-        }
-        /* END: UPDATED SKILL BADGE COLORS */
+/* Python - 둥근 모서리 깔끔한 대각선 분할 */
+.skill-python {
+    background-color: #5A8BAA; /* 첫 번째 색상 */
+    -webkit-mask-image: linear-gradient(135deg, transparent 49%, black 51%); /* 두 번째 색상 영역만 보이도록 마스크 */
+    mask-image: linear-gradient(135deg, transparent 49%, black 51%);
+    position: relative; /* 자식 요소 절대 위치 지정을 위해 */
+    color: #000;
+}
+.skill-python::before { /* 두 번째 색상 표현을 위한 가상 요소 */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #F0D878; /* 두 번째 색상 */
+    z-index: -1; /* 버튼 내용 뒤로 보냄 */
+    border-radius: inherit; /* 부모의 둥근 모서리 상속 */
+    -webkit-mask-image: linear-gradient(135deg, black 49%, transparent 51%); /* 첫 번째 색상 영역만 보이도록 마스크 */
+    mask-image: linear-gradient(135deg, black 49%, transparent 51%);
+}
+
+.skill-javascript {
+    background-color: #F0E68C;
+    color: #333;
+}
+.skill-react {
+    background-color: #88CEDE;
+    color: #000000;
+}
+.skill-html5 {
+    background-color: #E57373;
+}
+.skill-css3 {
+    background-color: #6495ED;
+}
+.skill-tailwindcss {
+    background-color: #4DB6AC;
+}
+
+/* Firebase - 둥근 모서리 깔끔한 대각선 분할 */
+.skill-firebase {
+    background-color: #FFCC80; /* 첫 번째 색상 */
+    -webkit-mask-image: linear-gradient(135deg, transparent 49%, black 51%);
+    mask-image: linear-gradient(135deg, transparent 49%, black 51%);
+    position: relative;
+    color: #000;
+}
+.skill-firebase::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #FFA726; /* 두 번째 색상 */
+    z-index: -1;
+    border-radius: inherit;
+    -webkit-mask-image: linear-gradient(135deg, black 49%, transparent 51%);
+    mask-image: linear-gradient(135deg, black 49%, transparent 51%);
+}
+
+/* Bioinformatics - 둥근 모서리 깔끔한 대각선 분할 */
+.skill-bioinformatics {
+    background-color: #81C784; /* 첫 번째 색상 */
+    -webkit-mask-image: linear-gradient(135deg, transparent 49%, black 51%);
+    mask-image: linear-gradient(135deg, transparent 49%, black 51%);
+    position: relative;
+}
+.skill-bioinformatics::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #90A4AE; /* 두 번째 색상 */
+    z-index: -1;
+    border-radius: inherit;
+    -webkit-mask-image: linear-gradient(135deg, black 49%, transparent 51%);
+    mask-image: linear-gradient(135deg, black 49%, transparent 51%);
+}
+/* END: UPDATED SKILL BADGE COLORS */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
