@@ -270,39 +270,41 @@
             color: #f9fafb;
         }
 
-        /* START: SKILL BADGE COLORS */
+        /* START: UPDATED SKILL BADGE COLORS */
         .skill-badge {
             color: white;
-            border: 1px solid transparent; /* 그라데이션 테두리 정리 */
+            border: 1px solid transparent; 
         }
 
         .skill-python {
-            background-image: linear-gradient(to right, #3776AB 50%, #FFD43B 50%);
+            background-image: linear-gradient(135deg, #5A8BAA 50%, #F0D878 50%);
+            color: #000;
         }
         .skill-javascript {
-            background-color: #F7DF1E;
-            color: #000000;
+            background-color: #F0E68C;
+            color: #333;
         }
         .skill-react {
-            background-color: #61DAFB;
+            background-color: #88CEDE;
             color: #000000;
         }
         .skill-html5 {
-            background-color: #E34F26;
+            background-color: #E57373;
         }
         .skill-css3 {
-            background-color: #1572B6;
+            background-color: #6495ED;
         }
         .skill-tailwindcss {
-            background-color: #06B6D4;
+            background-color: #4DB6AC;
         }
         .skill-firebase {
-            background-image: linear-gradient(to right, #FFCA28 50%, #F57C00 50%);
+            background-image: linear-gradient(135deg, #FFCC80 50%, #FFA726 50%);
+            color: #000;
         }
         .skill-bioinformatics {
-            background-image: linear-gradient(to right, #4CAF50 50%, #607D8B 50%);
+            background-image: linear-gradient(135deg, #81C784 50%, #90A4AE 50%);
         }
-        /* END: SKILL BADGE COLORS */
+        /* END: UPDATED SKILL BADGE COLORS */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -635,7 +637,7 @@
         let charIndex = 0;
 
         function type() {
-            if (charIndex < textArray[textArrayIndex].length) {
+            if (typedTextElement && charIndex < textArray[textArrayIndex].length) {
                 typedTextElement.textContent += textArray[textArrayIndex].charAt(charIndex);
                 charIndex++;
                 setTimeout(type, typingDelay);
