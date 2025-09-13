@@ -161,10 +161,39 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: none; /* UPDATED: 그림자 제거 */
         }
         
         .dark .theme-switch__knob {
             transform: translateX(26px);
+        }
+
+        .theme-switch__icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            fill: #6b7280;
+            transition: opacity 0.2s;
+        }
+        .dark .theme-switch__icon {
+             fill: #e5e7eb;
+        }
+
+        .theme-switch__icon--sun {
+            opacity: 1;
+        }
+        .dark .theme-switch__icon--sun {
+            opacity: 0;
+        }
+
+        .theme-switch__icon--moon {
+            opacity: 0;
+            right: 6px;
+        }
+        .dark .theme-switch__icon--moon {
+            opacity: 1;
         }
 
         #typed-text::after {
@@ -187,30 +216,6 @@
             50% { opacity: 0; }
         }
 
-        .skill-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border-radius: 9999px;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-        }
-
-        .skill-badge:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Light Mode Styles */
-        .skill-badge {
-            background-color: #e5e7eb; /* gray-200 */
-            color: #1f2937; /* gray-800 */
-        }
-
-        /* Dark Mode Styles */
-        .dark .skill-badge {
-            background-color: #374151; /* gray-700 */
-            color: #f9fafb; /* gray-50 */
-        }
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -253,6 +258,16 @@
                     <button onclick="window.showSection('about')" class="nav-btn btn px-4 py-2 rounded-full" data-section="about">About</button>
                     <button onclick="window.showSection('research')" class="nav-btn btn px-4 py-2 rounded-full" data-section="research">CV</button>
                     <button onclick="window.showSection('community')" class="nav-btn btn px-4 py-2 rounded-full" data-section="community">Com.</button>
+                    
+                    <div id="dark-mode-toggle" class="theme-switch" aria-label="Toggle dark mode">
+                        <div class="theme-switch__icon theme-switch__icon--moon">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.29,15.29A10,10,0,1,1,8.71,6.71,8,8,0,0,0,17.29,15.29Z"/></svg>
+                        </div>
+                        <div class="theme-switch__knob">
+                            <div class="theme-switch__icon theme-switch__icon--sun">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM12,20a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/><rect width="2" height="4" x="11" y="1"/><rect width="4" height="2" x="19" y="11"/><rect width="2" height="4" x="11" y="19"/><rect width="4" height="2" x="1" y="11"/><rect width="2.83" height="2.83" x="4.54" y="4.54" transform="rotate(-45 5.95 5.95)"/><rect width="2.83" height="2.83" x="16.63" y="16.63" transform="rotate(-45 18.044 18.044)"/><rect width="2.83" height="2.83" x="4.54" y="16.63" transform="rotate(-135 5.95 18.04)"/><rect width="2.83" height="2.83" x="16.63" y="4.54" transform="rotate(134.999 18.04 5.95)"/></svg>
+                            </div>
+                        </div>
                     </div>
 
                     <button id="login-btn" class="btn bg-blue-500 text-white px-4 py-2 rounded-full" style="display: none;">Login</button>
@@ -277,6 +292,7 @@
                     
                     <div id="dark-mode-toggle-mobile" class="theme-switch" aria-label="Toggle dark mode">
                         <div class="theme-switch__icon theme-switch__icon--moon">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.29,15.29A10,10,0,1,1,8.71,6.71,8,8,0,0,0,17.29,15.29Z"/></svg>
                         </div>
                         <div class="theme-switch__knob">
                             <div class="theme-switch__icon theme-switch__icon--sun">
@@ -298,13 +314,10 @@
     <main class="container mx-auto p-4 sm:p-8">
         <section id="about" class="hidden max-w-4xl mx-auto card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 content-section">
             <div class="text-center">
-                <img src="IMG_7860.jpeg" alt="Profile Picture" class="rounded-full w-40 h-40 sm:w-60 sm:h-60 mx-auto mb-6 shadow-md object-cover brightness-95 transition-all">
+                <img src="IMG_7859.jpeg" alt="Profile Picture" class="rounded-full w-40 h-40 sm:w-60 sm:h-60 mx-auto mb-6 shadow-md object-cover brightness-95 transition-all">
                 <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 min-h-[2.5em]">
                     > I'm <span id="typed-text" class="font-semibold text-blue-600 dark:text-blue-400"></span>
                 </p>
-            </div>
-            
-            <div id="skills-container" class="flex flex-wrap justify-center gap-3">
             </div>
             
             <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed mt-4">
@@ -489,17 +502,6 @@
                 if (textArrayIndex >= textArray.length) textArrayIndex = 0;
                 setTimeout(type, typingDelay + 500);
             }
-        }
-
-        // --- Skills Logic ---
-        const mySkills = ["Python", "C", "C++", "JavaScript", "HTML", "CSS", "TailwindCSS", "Linux", "Kotlin"];
-
-        function renderSkills() {
-            if (!skillsContainer) return;
-            skillsContainer.innerHTML = mySkills.map(skill => {
-                const skillClass = `skill-${skill.toLowerCase().replace('++', 'plusplus')}`;
-                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
-            }).join('');
         }
         
         // --- Helper Functions ---
@@ -826,7 +828,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             createBubbles();
             createFish();
-            renderSkills();
             
             // Set initial section visibility
             document.querySelectorAll('main section').forEach(section => {
