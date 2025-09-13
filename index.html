@@ -168,34 +168,6 @@
             transform: translateX(26px);
         }
 
-        .theme-switch__icon {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            fill: #6b7280;
-            transition: opacity 0.2s;
-        }
-        .dark .theme-switch__icon {
-             fill: #e5e7eb;
-        }
-
-        .theme-switch__icon--sun {
-            opacity: 1;
-        }
-        .dark .theme-switch__icon--sun {
-            opacity: 0;
-        }
-
-        .theme-switch__icon--moon {
-            opacity: 0;
-            right: 6px;
-        }
-        .dark .theme-switch__icon--moon {
-            opacity: 1;
-        }
-
         #typed-text::after {
             content: '|';
             display: inline-block;
@@ -216,6 +188,30 @@
             50% { opacity: 0; }
         }
 
+        .skill-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+        }
+
+        .skill-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Light Mode Styles */
+        .skill-badge {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+        }
+
+        /* Dark Mode Styles */
+        .dark .skill-badge {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-50 */
+        }
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -318,6 +314,11 @@
                 <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 min-h-[2.5em]">
                     > I'm <span id="typed-text" class="font-semibold text-blue-600 dark:text-blue-400"></span>
                 </p>
+            </div>
+            
+            <div class="mt-4 mb-8 text-center">
+                <div id="skills-container" class="flex flex-wrap justify-center gap-3">
+                </div>
             </div>
             
             <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed mt-4">
