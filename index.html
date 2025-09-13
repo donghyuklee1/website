@@ -247,40 +247,33 @@
             50% { opacity: 0; }
         }
 
-        /* START: NEW BLOG STYLES */
-        .blog-post-card {
-            border-bottom: 1px solid #e5e7eb; /* gray-200 */
-            padding-top: 1.5rem; /* py-6 */
-            padding-bottom: 1.5rem; /* py-6 */
-            transition: background-color 0.2s;
-        }
-        .dark .blog-post-card {
-            border-bottom-color: #4a5568; /* gray-600 */
-        }
-        .blog-post-card:hover {
-            background-color: rgba(239, 246, 255, 0.5); /* blue-50 with opacity */
-        }
-        .dark .blog-post-card:hover {
-            background-color: rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
-        }
-
-        .blog-tag {
+        /* START: CSS FOR SKILL BADGES */
+        .skill-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+            /* UPDATED: 스킬 배지 크기 축소 */
+            padding: 0.25rem 0.75rem; /* 4px 12px */
+            font-size: 0.75rem;      /* 12px */
             font-weight: 500;
-            border-radius: 9999px;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            background-color: #eff6ff; /* blue-50 */
-            color: #1d4ed8; /* blue-700 */
+            border-radius: 9999px; /* pill shape */
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
         }
-        .dark .blog-tag {
-            background-color: #374151; /* gray-700 */
-            color: #d1d5db; /* gray-300 */
-        }
-        /* END: NEW BLOG STYLES */
 
+        .skill-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Light Mode Styles */
+        .skill-badge {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+        }
+
+        /* Dark Mode Styles */
+        .dark .skill-badge {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-50 */
+        }
+        /* END: CSS FOR SKILL BADGES */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -490,21 +483,18 @@
             </div>
         </section>
 
-        <section id="blog" class="hidden max-w-4xl mx-auto card p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-200 content-section">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-                <div>
-                    <h2 class="text-3xl sm:text-4xl font-bold">Blog</h2>
-                    <p class="text-gray-500 dark:text-gray-400 mt-2">My thoughts on technology, projects, and life.</p>
-                </div>
-                <button id="new-blog-post-btn" style="display: none;" class="btn bg-blue-500 text-white px-4 py-2 rounded-full mt-4 sm:mt-0">Add Post</button>
+        <section id="blog" class="hidden max-w-5xl mx-auto content-section">
+             <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl sm:text-4xl font-bold">Blog</h2>
+                <button id="new-blog-post-btn" style="display: none;" class="btn bg-blue-500 text-white px-4 py-2 rounded-full">Add a Blog</button>
             </div>
-            
-            <div class="mb-6">
-                <input type="search" id="blog-search-input" placeholder="Search posts..." class="w-full p-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <div id="blog-container" class="space-y-4">
+            <div class="mb-6 flex flex-col sm:flex-row gap-4">
+                <input type="search" id="blog-search-input" placeholder="Search posts..." class="w-full sm:w-1/3 p-2 rounded-full border bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="categories-container" class="flex flex-wrap gap-2 items-center">
                 </div>
+            </div>
+            <div id="blog-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
         </section>
 
         <section id="community" class="hidden max-w-4xl mx-auto content-section">
@@ -611,7 +601,7 @@
         let charIndex = 0;
 
         function type() {
-            if (typedTextElement && charIndex < textArray[textArrayIndex].length) {
+            if (charIndex < textArray[textArrayIndex].length) {
                 typedTextElement.textContent += textArray[textArrayIndex].charAt(charIndex);
                 charIndex++;
                 setTimeout(type, typingDelay);
@@ -633,14 +623,11 @@
         }
 
         // --- Skills Logic ---
-        const mySkills = ["Python", "C", "C++", "JavaScript", "CSS", "Linux", "Kotlin"];
+        const mySkills = ["Python", "Javascript", "React", "HTML5", "CSS", "TailwindCSS", "C", "C++"];
 
         function renderSkills() {
             if (!skillsContainer) return;
-            skillsContainer.innerHTML = mySkills.map(skill => {
-                const skillClass = `skill-${skill.toLowerCase().replace('++', 'plusplus')}`;
-                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
-            }).join('');
+            skillsContainer.innerHTML = mySkills.map(skill => `<div class="skill-badge">${skill}</div>`).join('');
         }
 
         // --- Helper Functions ---
@@ -960,26 +947,19 @@
         }
 
         function renderBlogArticle(article) {
-            const articleElement = document.createElement('article');
-            articleElement.className = 'blog-post-card';
-            
-            const formattedDate = article.timestamp ? new Date(article.timestamp.seconds * 1000).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            }) : '';
-
+            const articleElement = document.createElement('div');
+            articleElement.className = 'card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm overflow-hidden rounded-xl shadow-lg border';
             articleElement.innerHTML = `
-                <a href="#" onclick="event.preventDefault(); window.showBlogArticle('${article.id}')" class="block group">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">${formattedDate}</p>
-                    <h3 class="text-2xl font-bold mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${article.title}</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mt-3">${article.content.substring(0, 150)}...</p>
-                    <div class="mt-4">
-                        ${(article.tags || []).map(tag => `<span class="blog-tag">#${tag}</span>`).join('')}
+                ${article.imageURL ? `<img class="w-full h-48 object-cover" src="${article.imageURL}" alt="${article.title}">` : ''}
+                <div class="p-6">
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        ${(article.tags || []).map(tag => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-800">#${tag}</span>`).join('')}
                     </div>
-                    <p class="font-semibold text-blue-600 dark:text-blue-400 mt-4 inline-flex items-center">
-                        Read More
-                        <span class="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                    </p>
-                </a>
+                    <h3 class="text-2xl font-bold mb-2">${article.title}</h3>
+                    <p class="text-sm text-gray-500 mb-4">By ${article.authorName} • ${formatTimestamp(article.timestamp)}</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">${article.content.substring(0, 150)}...</p>
+                    <a href="#" onclick="event.preventDefault(); window.showBlogArticle('${article.id}')" class="font-semibold text-blue-500 hover:underline">Read More</a>
+                </div>
             `;
             blogContainer.appendChild(articleElement);
         }
@@ -1045,7 +1025,7 @@
                 <p class="text-sm text-gray-500 mb-4">By ${article.authorName} • ${formatTimestamp(article.timestamp)}</p>
                 ${article.imageURL ? `<img class="w-full h-64 object-cover rounded-lg my-4" src="${article.imageURL}" alt="${article.title}">` : ''}
                 <div class="flex flex-wrap gap-2 mb-6">
-                    ${(article.tags || []).map(tag => `<span class="blog-tag">#${tag}</span>`).join('')}
+                    ${(article.tags || []).map(tag => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-200 dark:text-blue-800">#${tag}</span>`).join('')}
                 </div>
                 <div class="prose dark:prose-invert max-w-none whitespace-pre-wrap">${article.content}</div>
             `;
