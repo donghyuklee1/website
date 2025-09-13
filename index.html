@@ -222,7 +222,7 @@
             font-size: 0.75rem;
             font-weight: 500;
             border-radius: 9999px;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
         }
 
         .skill-badge:hover {
@@ -567,7 +567,18 @@
                 setTimeout(type, typingDelay + 500);
             }
         }
-        
+
+        // --- Skills Logic ---
+        const mySkills = ["Python", "C", "C++", "JavaScript", "CSS", "Linux", "Kotlin"];
+
+        function renderSkills() {
+            if (!skillsContainer) return;
+            skillsContainer.innerHTML = mySkills.map(skill => {
+                const skillClass = `skill-${skill.toLowerCase().replace('++', 'plusplus')}`;
+                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
+            }).join('');
+        }
+
         // --- Helper Functions ---
         function formatTimestamp(timestamp) {
             if (!timestamp || !timestamp.toDate) return '';
@@ -892,6 +903,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             createBubbles();
             createFish();
+            renderSkills();
             
             // Set initial section visibility
             document.querySelectorAll('main section').forEach(section => {
