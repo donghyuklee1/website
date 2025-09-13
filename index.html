@@ -36,7 +36,7 @@
         }
 
         .wave {
-            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIiLz48cGF0aCBkPSJTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -250,8 +250,9 @@
         /* START: CSS FOR SKILL BADGES */
         .skill-badge {
             display: inline-block;
-            padding: 0.5rem 1rem; /* 8px 16px */
-            font-size: 0.875rem; /* 14px */
+            /* UPDATED: 스킬 배지 크기 축소 */
+            padding: 0.25rem 0.75rem; /* 4px 12px */
+            font-size: 0.75rem;      /* 12px */
             font-weight: 500;
             border-radius: 9999px; /* pill shape */
             transition: transform 0.2s ease-in-out, background-color 0.2s;
@@ -412,8 +413,7 @@
                 </p>
             </div>
             
-            <div class="my-8 text-center">
-                <h3 class="text-xl sm:text-2xl font-semibold mb-4">My Skills</h3>
+            <div class="my-6 text-center">
                 <div id="skills-container" class="flex flex-wrap justify-center gap-3">
                 </div>
             </div>
