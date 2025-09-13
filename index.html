@@ -229,52 +229,17 @@
             transform: translateY(-2px);
         }
 
+        /* Light Mode Styles */
         .skill-badge {
-            background-color: #e5e7eb;
-            color: #1f2937;
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
         }
 
+        /* Dark Mode Styles */
         .dark .skill-badge {
-            background-color: #374151;
-            color: #f9fafb;
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-50 */
         }
-
-        /* START: SKILL BADGE COLORS */
-        .skill-badge {
-            color: white;
-            border: 1px solid transparent; 
-        }
-        .skill-python {
-            background: linear-gradient(135deg, #5A8BAA 49.5%, #F0D878 50.5%);
-            color: #000;
-        }
-        .skill-c {
-            background-color: #55559C;
-        }
-        .skill-cplusplus {
-            background: linear-gradient(135deg, #55559C 49.5%, #0084D2 50.5%);
-        }
-        .skill-javascript {
-            background-color: #F0E68C;
-            color: #333;
-        }
-        .skill-html {
-            background-color: #E57373;
-        }
-        .skill-css {
-            background-color: #6495ED;
-        }
-        .skill-tailwindcss {
-            background-color: #4DB6AC;
-        }
-        .skill-linux {
-            background: linear-gradient(135deg, #222 49.5%, #FCC624 50.5%);
-            color: #fff;
-        }
-        .skill-kotlin {
-            background: linear-gradient(135deg, #7F52FF 49.5%, #F7923B 50.5%);
-        }
-        /* END: SKILL BADGE COLORS */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -378,7 +343,7 @@
                     > I'm <span id="typed-text" class="font-semibold text-blue-600 dark:text-blue-400"></span>
                 </p>
             </div>
-
+            
             <div class="mt-4 mb-8 text-center">
                 <div id="skills-container" class="flex flex-wrap justify-center gap-3">
                 </div>
@@ -569,7 +534,7 @@
         }
 
         // --- Skills Logic ---
-        const mySkills = ["Python", "C", "C++", "JavaScript", "CSS", "Linux", "Kotlin"];
+        const mySkills = ["Python", "C", "C++", "JavaScript", "HTML", "CSS", "TailwindCSS", "Linux", "Kotlin"];
 
         function renderSkills() {
             if (!skillsContainer) return;
@@ -578,7 +543,7 @@
                 return `<div class="skill-badge ${skillClass}">${skill}</div>`;
             }).join('');
         }
-
+        
         // --- Helper Functions ---
         function formatTimestamp(timestamp) {
             if (!timestamp || !timestamp.toDate) return '';
