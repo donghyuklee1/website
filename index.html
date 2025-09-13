@@ -161,7 +161,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: none; /* UPDATED: 그림자 제거 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .dark .theme-switch__knob {
@@ -216,6 +216,30 @@
             50% { opacity: 0; }
         }
 
+        .skill-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+        }
+
+        .skill-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Light Mode Styles */
+        .skill-badge {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+        }
+
+        /* Dark Mode Styles */
+        .dark .skill-badge {
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-50 */
+        }
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -318,6 +342,11 @@
                 <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 min-h-[2.5em]">
                     > I'm <span id="typed-text" class="font-semibold text-blue-600 dark:text-blue-400"></span>
                 </p>
+            </div>
+            
+            <div class="mt-4 mb-8 text-center">
+                <div id="skills-container" class="flex flex-wrap justify-center gap-3">
+                </div>
             </div>
             
             <div class="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed mt-4">
@@ -502,6 +531,17 @@
                 if (textArrayIndex >= textArray.length) textArrayIndex = 0;
                 setTimeout(type, typingDelay + 500);
             }
+        }
+
+        // --- Skills Logic ---
+        const mySkills = ["Python", "C", "C++", "JavaScript", "HTML", "CSS", "TailwindCSS", "Linux"];
+
+        function renderSkills() {
+            if (!skillsContainer) return;
+            skillsContainer.innerHTML = mySkills.map(skill => {
+                const skillClass = `skill-${skill.toLowerCase().replace('++', 'plusplus')}`;
+                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
+            }).join('');
         }
         
         // --- Helper Functions ---
@@ -828,6 +868,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             createBubbles();
             createFish();
+            renderSkills();
             
             // Set initial section visibility
             document.querySelectorAll('main section').forEach(section => {
