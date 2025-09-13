@@ -36,7 +36,7 @@
         }
 
         .wave {
-            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIiLz48cGF0aCBkPSJTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -247,14 +247,12 @@
             50% { opacity: 0; }
         }
 
-        /* START: CSS FOR SKILL BADGES */
         .skill-badge {
             display: inline-block;
-            /* UPDATED: 스킬 배지 크기 축소 */
-            padding: 0.25rem 0.75rem; /* 4px 12px */
-            font-size: 0.75rem;      /* 12px */
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
             font-weight: 500;
-            border-radius: 9999px; /* pill shape */
+            border-radius: 9999px;
             transition: transform 0.2s ease-in-out, background-color 0.2s;
         }
 
@@ -262,18 +260,49 @@
             transform: translateY(-2px);
         }
 
-        /* Light Mode Styles */
         .skill-badge {
-            background-color: #e5e7eb; /* gray-200 */
-            color: #1f2937; /* gray-800 */
+            background-color: #e5e7eb;
+            color: #1f2937;
         }
 
-        /* Dark Mode Styles */
         .dark .skill-badge {
-            background-color: #374151; /* gray-700 */
-            color: #f9fafb; /* gray-50 */
+            background-color: #374151;
+            color: #f9fafb;
         }
-        /* END: CSS FOR SKILL BADGES */
+
+        /* START: SKILL BADGE COLORS */
+        .skill-badge {
+            color: white;
+            border: 1px solid transparent; /* 그라데이션 테두리 정리 */
+        }
+
+        .skill-python {
+            background-image: linear-gradient(to right, #3776AB 50%, #FFD43B 50%);
+        }
+        .skill-javascript {
+            background-color: #F7DF1E;
+            color: #000000;
+        }
+        .skill-react {
+            background-color: #61DAFB;
+            color: #000000;
+        }
+        .skill-html5 {
+            background-color: #E34F26;
+        }
+        .skill-css3 {
+            background-color: #1572B6;
+        }
+        .skill-tailwindcss {
+            background-color: #06B6D4;
+        }
+        .skill-firebase {
+            background-image: linear-gradient(to right, #FFCA28 50%, #F57C00 50%);
+        }
+        .skill-bioinformatics {
+            background-image: linear-gradient(to right, #4CAF50 50%, #607D8B 50%);
+        }
+        /* END: SKILL BADGE COLORS */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -632,7 +661,10 @@
 
         function renderSkills() {
             if (!skillsContainer) return;
-            skillsContainer.innerHTML = mySkills.map(skill => `<div class="skill-badge">${skill}</div>`).join('');
+            skillsContainer.innerHTML = mySkills.map(skill => {
+                const skillClass = `skill-${skill.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
+            }).join('');
         }
 
         // --- Helper Functions ---
