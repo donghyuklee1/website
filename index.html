@@ -36,7 +36,7 @@
         }
 
         .wave {
-            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDEyMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZD0iTTAsNDEuODNDMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OSwyNi43MUM2NTQuNDgsNjIuNjcsODE4LjQ0LDExOS42MiwxMjAwLDk4LjE3VjEyMEgwWiIgb3BhY2l0eT0iLjIiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNLTEuNjgsNjQuNDhjMTU1LjY2LDAsMzE0LjY5LTQxLjM0LDQ3Mi4zMi0yOS4xN0M2NDAuMzIsNDguNjcsNzQ4LjE5LDExOS42MiwxMjAwLDk4LjE3VjEyMEgtMS42OFoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjZmZmIiLz48cGF0aCBkPSJTTAsNjQuNDhjMTQ5LjQzLDE1LjE3LDMwMS4yNSwwLDQ0OS44OS0yNi43MUM2NTQuNDgsNzcuNjcsODE4LjQ0LDU0LjYyLDEyMDAsOTguMTdWMTIwSDBaIiBmaWxsPSIjZmZmIi8+PC9zdmc+) repeat-x;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -247,12 +247,14 @@
             50% { opacity: 0; }
         }
 
+        /* START: CSS FOR SKILL BADGES */
         .skill-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+            /* UPDATED: 스킬 배지 크기 축소 */
+            padding: 0.25rem 0.75rem; /* 4px 12px */
+            font-size: 0.75rem;      /* 12px */
             font-weight: 500;
-            border-radius: 9999px;
+            border-radius: 9999px; /* pill shape */
             transition: transform 0.2s ease-in-out, background-color 0.2s;
         }
 
@@ -260,47 +262,18 @@
             transform: translateY(-2px);
         }
 
+        /* Light Mode Styles */
         .skill-badge {
-            background-color: #e5e7eb;
-            color: #1f2937;
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
         }
 
+        /* Dark Mode Styles */
         .dark .skill-badge {
-            background-color: #374151;
-            color: #f9fafb;
+            background-color: #374151; /* gray-700 */
+            color: #f9fafb; /* gray-50 */
         }
-
-        /* START: UPDATED SKILL BADGE COLORS */
-        .skill-badge {
-            color: white;
-            border: 1px solid transparent; 
-        }
-
-        .skill-python {
-            background: linear-gradient(135deg, #5A8BAA 49.5%, #F0D878 50.5%);
-            color: #000;
-        }
-        .skill-c {
-            background-color: #55559C;
-        }
-        .skill-cplusplus {
-            background: linear-gradient(135deg, #55559C 49.5%, #0084D2 50.5%);
-        }
-        .skill-javascript {
-            background-color: #F0E68C;
-            color: #333;
-        }
-        .skill-css {
-            background-color: #6495ED;
-        }
-        .skill-linux {
-            background: linear-gradient(135deg, #222 49.5%, #FCC624 50.5%);
-            color: #000;
-        }
-        .skill-kotlin {
-            background: linear-gradient(135deg, #7F52FF 49.5%, #F7923B 50.5%);
-        }
-        /* END: UPDATED SKILL BADGE COLORS */
+        /* END: CSS FOR SKILL BADGES */
     </style>
 </head>
 <body class="text-gray-800 dark:text-gray-200">
@@ -440,7 +413,7 @@
                 </p>
             </div>
             
-            <div class="mt-4 mb-8 text-center">
+            <div class="my-6 text-center">
                 <div id="skills-container" class="flex flex-wrap justify-center gap-3">
                 </div>
             </div>
@@ -633,7 +606,7 @@
         let charIndex = 0;
 
         function type() {
-            if (typedTextElement && charIndex < textArray[textArrayIndex].length) {
+            if (charIndex < textArray[textArrayIndex].length) {
                 typedTextElement.textContent += textArray[textArrayIndex].charAt(charIndex);
                 charIndex++;
                 setTimeout(type, typingDelay);
@@ -655,14 +628,11 @@
         }
 
         // --- Skills Logic ---
-        const mySkills = ["Python", "C", "C++", "JavaScript", "CSS", "Linux", "Kotlin"];
+        const mySkills = ["JavaScript", "Python", "React", "HTML5", "CSS3", "TailwindCSS", "Firebase", "Bioinformatics"];
 
         function renderSkills() {
             if (!skillsContainer) return;
-            skillsContainer.innerHTML = mySkills.map(skill => {
-                const skillClass = `skill-${skill.toLowerCase().replace('++', 'plusplus')}`;
-                return `<div class="skill-badge ${skillClass}">${skill}</div>`;
-            }).join('');
+            skillsContainer.innerHTML = mySkills.map(skill => `<div class="skill-badge">${skill}</div>`).join('');
         }
 
         // --- Helper Functions ---
